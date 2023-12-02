@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM Application</title>
+</head>
+<body>
+  <h1>CRM Application</h1>
+
+  <a href="/add"> Add Client </a>
+
+  <form action="/search" method="post">
+    
+    <table>
+        <tr>
+            <td>
+                <h2>Select Columns to Display</h2>
+                <ul>
+                    <% columnNames.forEach(item => { %>
+                    <li>
+                        <input type="checkbox" id="<%= item %>" name="<%= item %>" value="<%= item %>">
+                        <label for="<%= item %>"> <%= item %></label>
+                    </li>
+                    <% }); %>
+                </ul>
+            </td>
+        
+            <td>
+                <h2> Select RMs</h2>
+                <ul>
+                    <% rmNames.forEach(item => { %>
+                    <li>
+                        <input type="checkbox" id="<%= item %>" name="<%= item %>" value="<%= item %>">
+                        <label for="<%= item %>"> <%= item %></label>
+                        
+                    <% }); %>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><button type"submit">Search</button></td>
+        </tr>
+    </table>
+    
+  </form>
+
+  <br>
+  <br>
+
+  <!-- Printing the serach result box -->
+  <% if(locals.searchHeaders) { %>
+    <table border="1">
+        <tr>
+            <% searchHeaders.forEach(item => { %>
+            <td><b><%= item %></b></td>
+            <% }); %>
+        </tr>
+        <% for (var i=0; i<searchResult.length; i++) { %>
+            <tr>
+                <% Object.keys(searchResult[i]).forEach(col => { %>
+                <td><%= searchResult[i][col] %></td>
+                <% }); %>  
+            </tr>
+        <% } %>
+    </table>
+  <% } %>
+</body>
+</html>

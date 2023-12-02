@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM Application</title>
+</head>
+
+<body>
+    <h1>Add Client</h1>
+
+    <form action="/add" method="post">
+      <table>
+        <% columnNames.forEach(item => { %>
+          <tr>
+              <td><label for="<%= item %>"> <%= item %></label></td>
+              <td><input type="text" id="<%= item %>" name="<%= item %>""></td>
+          </tr>
+        <% }); %>
+        <tr>
+          <td><button type"submit">Add</button></td>
+          <td></td>
+        </tr>
+      </table>
+    </form>
+
+</body>
+
+</html>
