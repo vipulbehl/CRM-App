@@ -7,7 +7,8 @@ const {
   populateCustomerData,
   getRmNames,
   searchData,
-  addData
+  addData,
+  populateSchema
 } = require("./customerService.js")
 
 const app = express();
@@ -21,11 +22,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 let customerData
 let rmNames
 let columnNames
+let schemaData
 
 // Loading the home page
 app.get('/', async (req, res) => {
   try {
     customerData = await populateCustomerData();
+    schemaData = await populateSchema();
     rmNames = getRmNames(customerData);
     columnNames = Object.keys(customerData[0]);
     res.render('index', { customerData: customerData, rmNames: rmNames, columnNames: columnNames });
@@ -48,8 +51,7 @@ app.post('/search', async (req, res) => {
 
 // Loading the add new client page
 app.get('/add', async (req, res) => {
-  // This might later need a function call to populate what are the allowed values for the column names
-  res.render('addClient', {columnNames: columnNames});
+  res.render('addClient', {columnNames: columnNames, schemaData: schemaData});
 });
 
 app.post('/add', async (req, res) => {

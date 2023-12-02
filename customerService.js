@@ -42,6 +42,30 @@ async function populateCustomerData() {
     }
 }
 
+async function populateSchema() {
+    const schemaData = {};
+    try {
+        let sheetName = process.env.SCHEMA_SHEET_NAME;
+        const auth = await getAuthToken();
+        const response = await getSpreadSheetValues({
+            spreadsheetId,
+            auth,
+            sheetName,
+        });
+
+        const schemaArray = response.data.values;
+        
+
+        schemaArray.forEach(entry => {
+            schemaData[entry[0]] = entry[1]
+        });
+    } catch (error) {
+        console.log(error.message, error.stack);
+    }
+
+    return schemaData;
+}
+
 function getRmNames(customerData) {
     const uniqueRmNames = new Set();
 
@@ -83,5 +107,6 @@ module.exports = {
     populateCustomerData,
     getRmNames,
     searchData,
-    addData
+    addData,
+    populateSchema
 }
