@@ -128,4 +128,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Project specific excludes
 *.exe
+google-sheet-service-account-key.json
