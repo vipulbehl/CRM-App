@@ -48,7 +48,14 @@ app.post('/search', async (req, res) => {
 
   searchResult = await searchData(selectedColumns, selectedRMs);
   
-  res.render('index', { customerData: customerData, rmNames: rmNames, columnNames: columnNames, searchResult: searchResult, searchHeaders: Object.keys(searchResult[0]) });
+  res.render('index', { 
+    customerData: customerData, 
+    rmNames: rmNames, 
+    columnNames: columnNames, 
+    searchResult: searchResult, 
+    searchHeaders: Object.keys(searchResult[0]),
+    schemaData: schemaData
+  });
 });
 
 app.post('/download', async (req, res) => {  

@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CRM Application</title>
+  <script type="text/javascript">
+    function enableButtons(buttonIds) {
+        let buttonsIdList = buttonIds.split(",");
+        buttonsIdList.forEach(element => {
+            console.log(element);
+            document.getElementById(element).removeAttribute('disabled');
+        });
+    }
+</script>
 </head>
 <body>
   <h1>CRM Application</h1>
@@ -63,9 +72,37 @@
         </tr>
         <% for (var i=0; i<searchResult.length; i++) { %>
             <tr>
+                <% let enableIds = [] %>
                 <% Object.keys(searchResult[i]).forEach(col => { %>
-                <td><%= searchResult[i][col] %></td>
+
+                    <% const obj = JSON.parse(schemaData[col])
+                        let type = obj["type"]
+                        let values = obj["values"]
+                        let columnValue = searchResult[i][col];
+                        enableIds.push(columnValue);
+                    %>
+                
+                    <% if(type == "Dropdown") { %>
+                        <td>
+                            <select name="<%= columnValue %>" id="<%= columnValue %>" disabled>
+                                <% values.forEach(item => { %>
+                                    <% if(item == columnValue) { %>
+                                        <option value="<%= item %>" selected><%= item %></option>
+                                    <% } else { %>
+                                        <option value="<%= item %>"><%= item %></option>
+                                    <% } %>
+                                <% }) %>
+                            </select>
+                        </td>
+                    <% } else { %>
+                        <td>
+                            <input type="<%= type %>" id="<%= columnValue %>" name="<%= columnValue %>" value="<%= columnValue %>" disabled>
+                        </td>
+                    <% } %>
                 <% }); %>  
+                <td>
+                    <button type="button" onclick="enableButtons('<%= enableIds %>');">Edit</button>
+                </td>
             </tr>
         <% } %>
     </table>
