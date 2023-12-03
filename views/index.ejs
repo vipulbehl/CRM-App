@@ -50,6 +50,11 @@
 
   <!-- Printing the serach result box -->
   <% if(locals.searchHeaders) { %>
+    <form action="/download" method="post">
+        <button type"submit">Download Results</button>
+    </form>
+    <br>
+
     <table border="1">
         <tr>
             <% searchHeaders.forEach(item => { %>

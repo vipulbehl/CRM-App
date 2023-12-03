@@ -8,7 +8,8 @@ const {
   getRmNames,
   searchData,
   addData,
-  populateSchema
+  populateSchema,
+  downloadData
 } = require("./customerService.js")
 
 const app = express();
@@ -23,6 +24,7 @@ let customerData
 let rmNames
 let columnNames
 let schemaData
+let searchResult
 
 // Loading the home page
 app.get('/', async (req, res) => {
@@ -46,6 +48,11 @@ app.post('/search', async (req, res) => {
 
   searchResult = await searchData(selectedColumns, selectedRMs);
   
+  res.render('index', { customerData: customerData, rmNames: rmNames, columnNames: columnNames, searchResult: searchResult, searchHeaders: Object.keys(searchResult[0]) });
+});
+
+app.post('/download', async (req, res) => {  
+  file = await downloadData(searchResult);
   res.render('index', { customerData: customerData, rmNames: rmNames, columnNames: columnNames, searchResult: searchResult, searchHeaders: Object.keys(searchResult[0]) });
 });
 
