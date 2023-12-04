@@ -60,7 +60,14 @@ app.post('/search', async (req, res) => {
 
 app.post('/download', async (req, res) => {  
   file = await downloadData(searchResult);
-  res.render('index', { customerData: customerData, rmNames: rmNames, columnNames: columnNames, searchResult: searchResult, searchHeaders: Object.keys(searchResult[0]) });
+  res.render('index', { 
+    customerData: customerData, 
+    rmNames: rmNames, 
+    columnNames: columnNames, 
+    searchResult: searchResult, 
+    searchHeaders: Object.keys(searchResult[0]),
+    schemaData: schemaData
+  });
 });
 
 // Loading the add new client page
