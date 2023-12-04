@@ -91,7 +91,6 @@
                     <% Object.keys(searchResult[i]).forEach(col => { %>
                         <% 
                             if (col != "id") {
-                                console.log(col);
                                 const obj = JSON.parse(schemaData[col][0])
                                 let type = obj["type"]
                                 <!-- These are the allowed values for a column, which will appear in the dropdown list -->

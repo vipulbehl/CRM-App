@@ -26,6 +26,8 @@ let rmNames
 let columnNames
 let schemaData
 let searchResult
+let selectedColumns
+let selectedRMs
 
 // Loading the home page
 app.get('/', async (req, res) => {
@@ -43,8 +45,8 @@ app.get('/', async (req, res) => {
 
 // Loading the search results
 app.post('/search', async (req, res) => {
-  const selectedColumns = Object.keys(req.body).filter(item => columnNames.includes(item));
-  const selectedRMs = Object.keys(req.body).filter(item => rmNames.has(item));
+  selectedColumns = Object.keys(req.body).filter(item => columnNames.includes(item));
+  selectedRMs = Object.keys(req.body).filter(item => rmNames.has(item));
 
   searchResult = await searchData(selectedColumns, selectedRMs);
   
@@ -71,13 +73,15 @@ app.post('/download', async (req, res) => {
 });
 
 // Loading the add new client page
-app.get('/add`', async (req, res) => {
+app.get('/add', async (req, res) => {
   res.render('addClient', {columnNames: columnNames, schemaData: schemaData});
 });
 
 app.post('/update', async (req, res) => {
   await updateData(req.body, schemaData)
-  customerData = await populateCustomerData();
+
+  searchResult = await searchData(selectedColumns, selectedRMs);
+
   res.render('index', { 
     customerData: customerData, 
     rmNames: rmNames, 
