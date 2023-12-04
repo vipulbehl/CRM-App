@@ -41,10 +41,23 @@ async function addSpreadSheetsValue({ spreadsheetId, auth, sheetName, values }) 
   return res;
 }
 
+async function updateSpreadSheetValue({ spreadsheetId, auth, range, values }) {
+  const res = await sheets.spreadsheets.values.update({
+    spreadsheetId: spreadsheetId,
+    auth: auth,
+    range: range,
+    valueInputOption: 'USER_ENTERED',
+    resource: {
+      values: [[values]]
+    }
+  })
+}
+
 
 module.exports = {
   getAuthToken,
   getSpreadSheet,
   getSpreadSheetValues,
-  addSpreadSheetsValue
+  addSpreadSheetsValue,
+  updateSpreadSheetValue
 }

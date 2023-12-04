@@ -14,7 +14,7 @@
         <% for (let col of Object.keys(schemaData)) { %>
           <tr>
             <td><label for="<%= col %>"> <%= col %></label></td>
-            <% const obj = JSON.parse(schemaData[col])
+            <% const obj = JSON.parse(schemaData[col][0])
             let type = obj["type"]
             let values = obj["values"]
             %>

@@ -9,7 +9,8 @@ const {
   searchData,
   addData,
   populateSchema,
-  downloadData
+  downloadData,
+  updateData
 } = require("./customerService.js")
 
 const app = express();
@@ -34,7 +35,6 @@ app.get('/', async (req, res) => {
     rmNames = getRmNames(customerData);
     columnNames = Object.keys(customerData[0]);
     res.render('index', { customerData: customerData, rmNames: rmNames, columnNames: columnNames });
-    // res.sendFile(path.join(__dirname, 'views', 'index.html'));
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).send('Internal Server Error');
@@ -64,8 +64,21 @@ app.post('/download', async (req, res) => {
 });
 
 // Loading the add new client page
-app.get('/add', async (req, res) => {
+app.get('/add`', async (req, res) => {
   res.render('addClient', {columnNames: columnNames, schemaData: schemaData});
+});
+
+app.post('/update', async (req, res) => {
+  await updateData(req.body, schemaData)
+  customerData = await populateCustomerData();
+  res.render('index', { 
+    customerData: customerData, 
+    rmNames: rmNames, 
+    columnNames: columnNames, 
+    searchResult: searchResult, 
+    searchHeaders: Object.keys(searchResult[0]),
+    schemaData: schemaData
+  });
 });
 
 app.post('/add', async (req, res) => {
@@ -77,6 +90,4 @@ app.post('/add', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
   console.log("Credentials file ", process.env.GOOGLE_APPLICATION_CREDENTIALS)
-  console.log("Google Sheet ID ", process.env.GOOGLE_SHEET_ID)
 });
-

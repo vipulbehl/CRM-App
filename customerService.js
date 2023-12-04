@@ -4,7 +4,8 @@ const fs = require('fs');
 const {
     getAuthToken,
     getSpreadSheetValues,
-    addSpreadSheetsValue
+    addSpreadSheetsValue,
+    updateSpreadSheetValue
 } = require('./googleSheetsService.js');
 
 const spreadsheetId = process.env.GOOGLE_SHEET_ID;
@@ -32,6 +33,9 @@ async function populateCustomerData() {
                 currentObject[header] = currentRow[index];
             });
 
+            // Adding the row number in the object
+            currentObject['id'] = i;
+
             // Add the object to the result array
             customerData.push(currentObject);
         }
@@ -55,9 +59,8 @@ async function populateSchema() {
 
         const schemaArray = response.data.values;
         
-
         schemaArray.forEach(entry => {
-            schemaData[entry[0]] = entry[1]
+            schemaData[entry[0]] = [entry[1], entry[2]];
         });
     } catch (error) {
         console.log(error.message, error.stack);
@@ -81,7 +84,7 @@ async function searchData(selectedColumns, selectedRMs) {
 
     const searchResult = []
     
-    for (let i = 1; i < customerData.length; i++) {
+    for (let i = 0; i < customerData.length; i++) {
         const customer = customerData[i];
 
         if (selectedRMs.includes(customer["RM"])) {
@@ -89,6 +92,7 @@ async function searchData(selectedColumns, selectedRMs) {
             selectedColumns.forEach(col => {
                 currentObj[col] = customer[col];
             })
+            currentObj["id"] = i + 2;
             searchResult.push(currentObj);
         }
     }
@@ -100,7 +104,6 @@ async function addData(value) {
     const auth = await getAuthToken();
     const values = Object.values(value);
     const response = await addSpreadSheetsValue({ spreadsheetId, auth, sheetName, values });
-    console.log(response)
 }
 
 async function downloadData(searchResult) {
@@ -120,17 +123,36 @@ async function downloadData(searchResult) {
                 exportData = exportData.concat(",");
             }
         })
-
-
     }
 
     fs.writeFile(filePath, exportData, (err) => {
         if (err) {
             console.error('Error creating file:', err.message);
         } else {
-            console.log('File created successfully!');
+            console.log('File exported successfully!');
         }
     });
+}
+
+async function updateData(data, schemaData) {
+    const auth = await getAuthToken();
+    let value = data['0']
+    let selectedColumns = data['searchHeaders'].split(",");
+    selectedColumns.pop();  // Removing the id column
+    let rowNumber = data['rowNumber']
+    
+    for (var i = 0; i < selectedColumns.length; i++) {
+        let colNumber = schemaData[selectedColumns[i]][1];
+        let range = sheetName + "!" + colNumber + rowNumber;
+        
+        if ( typeof(value) == 'string' ) {
+            const values = value;
+            updateSpreadSheetValue({ spreadsheetId, auth, range, values });
+        } else {
+            const values = value[i];
+            updateSpreadSheetValue({ spreadsheetId, auth, range, values });
+        }
+    }
 }
 
 module.exports = {
@@ -139,5 +161,6 @@ module.exports = {
     searchData,
     addData,
     populateSchema,
-    downloadData
+    downloadData,
+    updateData
 }
