@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="164" height="61" viewBox="0 0 164 61">
+  <defs>
+    <style>
+      .cls-1 {
+        font-size: 66.667px;
+        fill: #00c;
+        text-anchor: middle;
+        font-family: "Myriad Pro";
+      }
+    </style>
+  </defs>
+  <image x="3" y="16" width="82" height="45" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFIAAAAtCAYAAAA9WDyPAAABMElEQVRoge3aXUrDUBRF4X3S+KCCnZJDcaxORsQnH0SQyinRBpOaQn621PSuDwp9Kr2LkzbtvZGZmisibiTdSnppX2LJ661Zpe8g7SPGriUiNpLuJX0UWe5I3W2X08bpWtKTpFcVPImt3gROiRER28M0vpceUd2QU2NERJ2Zu794U2v0FZKJWq5a+wL+i0W3P/jBRJoQ0oSQJoQ0IaQJIU0IaUJIE0KaENKEkCaENCGkSS9ku3eD6apuxKHnGOdkMf6nHOew87oZDEnEYU20UzuthDThW9uEkCa/Lm0u63mYSJPZR1bQx0SazD77gz7O/pg0l3Z9ESs5sybkZ9EFTDhEZcJnpAm3PyaENOE+0oSJNOG3tsnxLuJdRFyteUHnMrTV8CDpWdJjZr6VkWEhSXt1lFJt3oxu/gAAAABJRU5ErkJggg=="/>
+  <text id="CRM" class="cls-1" x="75" y="52"><tspan x="75">CRM</tspan></text>
+</svg>

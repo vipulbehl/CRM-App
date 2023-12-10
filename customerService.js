@@ -79,6 +79,12 @@ function getRmNames(customerData) {
     return uniqueRmNames;
 }
 
+/**
+ * 
+ * @param {*} selectedColumns 
+ * @param {*} selectedRMs 
+ * @returns [{"col1": "val"}]
+ */
 async function searchData(selectedColumns, selectedRMs) {
     customerData = await populateCustomerData();
 
@@ -100,9 +106,9 @@ async function searchData(selectedColumns, selectedRMs) {
     return searchResult;
 }
 
-async function addData(value) {
+async function addData(data) {
     const auth = await getAuthToken();
-    const values = Object.values(value);
+    const values = data["values"];
     const response = await addSpreadSheetsValue({ spreadsheetId, auth, sheetName, values });
 }
 
@@ -136,9 +142,8 @@ async function downloadData(searchResult) {
 
 async function updateData(data, schemaData) {
     const auth = await getAuthToken();
-    let value = data['0']
-    let selectedColumns = data['searchHeaders'].split(",");
-    selectedColumns.pop();  // Removing the id column
+    let value = data['values']
+    let selectedColumns = data['selectedColumns'];
     let rowNumber = data['rowNumber']
     
     for (var i = 0; i < selectedColumns.length; i++) {

@@ -132,3 +132,4 @@ dist
 # Project specific excludes
 *.exe
 google-sheet-service-account-key.json
+.vscode

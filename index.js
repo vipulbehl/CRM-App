@@ -18,8 +18,9 @@ const port = 3000;
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 let customerData
 let rmNames
@@ -32,11 +33,11 @@ let selectedRMs
 // Loading the home page
 app.get('/', async (req, res) => {
   try {
-    customerData = await populateCustomerData();
-    schemaData = await populateSchema();
+    customerData = await populateCustomerData(); // No longer needed
+    schemaData = await populateSchema();         // Might Not be needed
     rmNames = getRmNames(customerData);
-    columnNames = Object.keys(customerData[0]);
-    res.render('index', { customerData: customerData, rmNames: rmNames, columnNames: columnNames });
+    columnNames = Object.keys(customerData[0]);   // This could be populated through schema
+    res.render('home', { customerData: customerData, rmNames: rmNames, columnNames: columnNames });
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).send('Internal Server Error');
@@ -45,24 +46,13 @@ app.get('/', async (req, res) => {
 
 // Loading the search results
 app.post('/search', async (req, res) => {
-  selectedColumns = Object.keys(req.body).filter(item => columnNames.includes(item));
-  selectedRMs = Object.keys(req.body).filter(item => rmNames.has(item));
-
-  searchResult = await searchData(selectedColumns, selectedRMs);
-  
-  res.render('index', { 
-    customerData: customerData, 
-    rmNames: rmNames, 
-    columnNames: columnNames, 
-    searchResult: searchResult, 
-    searchHeaders: Object.keys(searchResult[0]),
-    schemaData: schemaData
-  });
+  searchResult = await searchData(req.body["selectedColumns"], req.body["selectedRms"]);
+  res.json({ success: true, result: searchResult, schema: schemaData });
 });
 
 app.post('/download', async (req, res) => {  
   file = await downloadData(searchResult);
-  res.render('index', { 
+  res.render('home', { 
     customerData: customerData, 
     rmNames: rmNames, 
     columnNames: columnNames, 
@@ -70,31 +60,22 @@ app.post('/download', async (req, res) => {
     searchHeaders: Object.keys(searchResult[0]),
     schemaData: schemaData
   });
-});
-
-// Loading the add new client page
-app.get('/add', async (req, res) => {
-  res.render('addClient', {columnNames: columnNames, schemaData: schemaData});
 });
 
 app.post('/update', async (req, res) => {
   await updateData(req.body, schemaData)
 
-  searchResult = await searchData(selectedColumns, selectedRMs);
+  res.json({ success: true });
+});
 
-  res.render('index', { 
-    customerData: customerData, 
-    rmNames: rmNames, 
-    columnNames: columnNames, 
-    searchResult: searchResult, 
-    searchHeaders: Object.keys(searchResult[0]),
-    schemaData: schemaData
-  });
+
+app.get('/add', async (req, res) => {
+  res.render('add', {columnNames: columnNames, schemaData: schemaData});
 });
 
 app.post('/add', async (req, res) => {
   addData(req.body)
-  res.redirect('/');
+  res.json({success: true});
 });
 
 
