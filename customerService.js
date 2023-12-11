@@ -98,7 +98,7 @@ async function searchData(selectedColumns, selectedRMs) {
             selectedColumns.forEach(col => {
                 currentObj[col] = customer[col];
             })
-            currentObj["id"] = i + 2;
+            currentObj["id"] = i + 2;   // Setting the correct index of the row in the search result
             searchResult.push(currentObj);
         }
     }

@@ -48,6 +48,7 @@ async function populateSearchTable(postData) {
             let tableBody = document.createElement('tbody');
             // Iterating over the rows
             for (let i = 0; i < searchResult.length; i++) {
+                let rowId = searchResult[i]['id'];
                 let row = document.createElement('tr');
 
                 // Looping over each column inside the row
@@ -65,7 +66,7 @@ async function populateSearchTable(postData) {
 
                         if(type == "Dropdown") {
                             // Displaying dropdown in case the field is of dropdown value otherwise displaying text/date option
-                            rowHtml += `<td><select name="${i}" id="${columnValue}" disabled>`;
+                            rowHtml += `<td><select name="${rowId}" id="${columnValue}" disabled>`;
                             values.forEach(item => {
                                 if(item.toLowerCase() == columnValue.toLowerCase()) {
                                     rowHtml += `<option value="${item}" selected>${item}</option>`;
@@ -75,13 +76,13 @@ async function populateSearchTable(postData) {
                             });
                             rowHtml += `</select></td>`;
                         } else {
-                            rowHtml += `<td><input type="${type}" id="${columnValue}" name="${i}" value="${columnValue}" disabled></td>`;
+                            rowHtml += `<td><input type="${type}" id="${columnValue}" name="${rowId}" value="${columnValue}" disabled></td>`;
                         }
                     }
                 });
 
                 rowHtml += `<td>
-                                <button type="button" id = "${i}0" onclick="enableButtons(this.id);">Edit</button>
+                                <button type="button" id = "${rowId}0" onclick="enableButtons(this.id);">Edit</button>
                             </td>`;
 
                 row.innerHTML = rowHtml;
@@ -97,7 +98,6 @@ async function populateSearchTable(postData) {
 }
 
 async function updateValues(rowId) {
-    let rowIdInt = parseInt(rowId) + 2;
     let values = []
     let selectedColumns = getSelectedSearchParams("selectedColumns");
 
@@ -110,7 +110,7 @@ async function updateValues(rowId) {
     let postData = {
         selectedColumns: selectedColumns,
         values: values,
-        rowNumber: rowIdInt
+        rowNumber: parseInt(rowId)
     };
 
     // Send a post request to /update endpoint
@@ -162,6 +162,7 @@ function enableButtons(enableDisableButtonId) {
 
     // Call to update the row if there are some values
     if (isUpdate) {
+        isUpdate = false;
         updateValues(enableDisableButtonId.slice(0,-1));
     }
 }
