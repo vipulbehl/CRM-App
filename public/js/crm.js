@@ -206,3 +206,21 @@ function addClientForm() {
     addClient(postData);
 }
 
+async function downloadButton() {
+    try {
+        const response = await fetch('/download', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (response.statusText != "OK") {
+            alert("There was some issue downloading");
+        } else {
+            alert("File downloaded");
+        }
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+}
+

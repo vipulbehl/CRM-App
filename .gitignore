@@ -133,3 +133,4 @@ dist
 *.exe
 google-sheet-service-account-key.json
 .vscode
+bootstrap-template

@@ -27,8 +27,6 @@ let rmNames
 let columnNames
 let schemaData
 let searchResult
-let selectedColumns
-let selectedRMs
 
 // Loading the home page
 app.get('/', async (req, res) => {
@@ -50,16 +48,9 @@ app.post('/search', async (req, res) => {
   res.json({ success: true, result: searchResult, schema: schemaData });
 });
 
-app.post('/download', async (req, res) => {  
+app.get('/download', async (req, res) => {  
   file = await downloadData(searchResult);
-  res.render('home', { 
-    customerData: customerData, 
-    rmNames: rmNames, 
-    columnNames: columnNames, 
-    searchResult: searchResult, 
-    searchHeaders: Object.keys(searchResult[0]),
-    schemaData: schemaData
-  });
+  res.json({success: true});
 });
 
 app.post('/update', async (req, res) => {
