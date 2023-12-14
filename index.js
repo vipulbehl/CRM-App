@@ -2,7 +2,6 @@ const path = require('path');
 require("dotenv").config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const bodyParser = require('body-parser');
-
 const {
   populateCustomerData,
   getRmNames,
@@ -10,7 +9,10 @@ const {
   addData,
   populateSchema,
   downloadData,
-  updateData
+  updateData,
+  populateConfig,
+  writeConfigToDisk,
+  getDayPeriod
 } = require("./customerService.js")
 
 const app = express();
@@ -22,20 +24,30 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-let customerData
 let rmNames
 let columnNames
 let schemaData
 let searchResult
+let config
+
+app.get('/', async (req, res) => {
+  config = await populateConfig();
+
+  if (config === undefined || config === null) {
+    res.render('login');
+  } else {
+    res.redirect('/home');
+  }
+});
 
 // Loading the home page
-app.get('/', async (req, res) => {
+app.get('/home', async (req, res) => {
+  // Set the good morning, afternoon and evening text nicely along with the name of the user
   try {
-    customerData = await populateCustomerData(); // No longer needed
-    schemaData = await populateSchema();         // Might Not be needed
-    rmNames = getRmNames(customerData);
-    columnNames = Object.keys(customerData[0]);   // This could be populated through schema
-    res.render('home', { customerData: customerData, rmNames: rmNames, columnNames: columnNames });
+    schemaData = await populateSchema();
+    rmNames = getRmNames(schemaData);
+    columnNames = Object.keys(schemaData);
+    res.render('home', { rmNames: rmNames, columnNames: columnNames, config: config, dayPeriod: getDayPeriod() });
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).send('Internal Server Error');
@@ -59,6 +71,11 @@ app.post('/update', async (req, res) => {
   res.json({ success: true });
 });
 
+app.post('/login', async (req, res) => {
+  config = req.body;
+  writeConfigToDisk(JSON.stringify(config));
+  res.redirect('/home')
+});
 
 app.get('/add', async (req, res) => {
   res.render('add', {columnNames: columnNames, schemaData: schemaData});
@@ -68,7 +85,6 @@ app.post('/add', async (req, res) => {
   addData(req.body)
   res.json({success: true});
 });
-
 
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);

@@ -82,7 +82,9 @@ async function populateSearchTable(postData) {
                 });
 
                 rowHtml += `<td>
-                                <button type="button" id = "${rowId}0" onclick="enableButtons(this.id);">Edit</button>
+                                <button type="button" class="btn btn-dark btn-icon-text" id = "${rowId}0" onclick="enableButtons(this.id);">
+                                    Edit               
+                                </button>
                             </td>`;
 
                 row.innerHTML = rowHtml;
@@ -224,3 +226,31 @@ async function downloadButton() {
     }
 }
 
+
+/**
+ * Function to enable all the selected fields for a give select tag id
+ * @param {*} selectId This is the id of the <select> tag
+ */
+function enableAllFields(selectId) {
+    let selectElement = document.getElementById(selectId.slice(0,-6));
+    for (let i = 0; i < selectElement.options.length; i++) {
+        console.log("Printing the values for the option = " + selectElement.options[i]);
+        selectElement.options[i].selected = true;
+    }
+    
+    let selectElement1 = $(selectId.slice(0,-6));
+    selectElement1.trigger('change');
+}
+
+
+function getDayPeriod() {
+    const currentHour = new Date().getHours();
+  
+    if (currentHour >= 5 && currentHour < 12) {
+      return 'Morning';
+    } else if (currentHour >= 12 && currentHour < 18) {
+      return 'Afternoon';
+    } else {
+      return 'Evening';
+    }
+  }

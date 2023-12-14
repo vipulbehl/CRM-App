@@ -1,5 +1,5 @@
 require('dotenv').config()
-const fs = require('fs');
+const fs = require('fs').promises;
 
 const {
     getAuthToken,
@@ -10,6 +10,7 @@ const {
 
 const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 const sheetName = process.env.GOOGLE_SHEET_NAME;
+const CONFIG_FIILE_PATH = "./config.json";
 
 async function populateCustomerData() {
     try {
@@ -69,13 +70,10 @@ async function populateSchema() {
     return schemaData;
 }
 
-function getRmNames(customerData) {
+function getRmNames(schemaData) {
     const uniqueRmNames = new Set();
-
-    customerData.forEach(item => {
-        uniqueRmNames.add(item["RM"]);
-    });
-
+    let rmList = JSON.parse(schemaData["RM"][0])["values"];
+    rmList.forEach(item => uniqueRmNames.add(item));
     return uniqueRmNames;
 }
 
@@ -113,7 +111,7 @@ async function addData(data) {
 }
 
 async function downloadData(searchResult) {
-    const filePath = "./exportData.csv"
+    const filePath = "./exportData.csv";
     
     // Adding the column headers
     let exportData = Object.keys(searchResult[0]).toString();
@@ -160,6 +158,37 @@ async function updateData(data, schemaData) {
     }
 }
 
+async function populateConfig() {
+    try {
+        const data = await fs.readFile(CONFIG_FIILE_PATH, 'utf8');
+        return JSON.parse(data);
+    } catch(err) {
+        return null;
+    }
+}
+
+function writeConfigToDisk(config) {
+    fs.writeFile(CONFIG_FIILE_PATH, config, (err) => {
+        if (err) {
+            console.error('Error creating file:', err.message);
+        } else {
+            console.log('Config file written');
+        }
+    });
+}
+
+function getDayPeriod() {
+    const currentHour = new Date().getHours();
+  
+    if (currentHour >= 5 && currentHour < 12) {
+      return 'Morning';
+    } else if (currentHour >= 12 && currentHour < 18) {
+      return 'Afternoon';
+    } else {
+      return 'Evening';
+    }
+  }
+
 module.exports = {
     populateCustomerData,
     getRmNames,
@@ -167,5 +196,8 @@ module.exports = {
     addData,
     populateSchema,
     downloadData,
-    updateData
+    updateData,
+    populateConfig,
+    writeConfigToDisk,
+    getDayPeriod
 }
