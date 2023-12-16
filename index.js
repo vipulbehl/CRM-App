@@ -31,13 +31,19 @@ let config
 
 // Loading the login page
 app.get('/', async (req, res) => {
-  config = await populateConfig();
+  try {
+    config = await populateConfig();
 
-  if (config === undefined || config === null) {
-    res.render('login');
-  } else {
-    res.redirect('/home');
+    if (config === undefined || config === null) {
+      res.render('login');
+    } else {
+      res.redirect('/home');
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error ' + error.message);
   }
+  
 });
 
 // Loading the home page
@@ -49,48 +55,77 @@ app.get('/home', async (req, res) => {
     res.render('home', { rmNames: rmNames, columnNames: columnNames, config: config, dayPeriod: getDayPeriod() });
   } catch (error) {
     console.error('Error:', error.message);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send('Internal Server Error ' + error.message);
   }
 });
 
 // Loading the search results
 app.post('/search', async (req, res) => {
-  searchResult = await searchData(
-    req.body["selectedColumns"], 
-    req.body["selectedRms"], 
-    req.body["nameList"], 
-    req.body["panList"],
-    req.body["isIncludeFamily"], 
-    req.body["isOnlyHeadInfo"]
-    );
-
-  res.json({ success: true, result: searchResult["result"], fullResult: searchResult["fullResult"], schema: schemaData });
+  try {
+    searchResult = await searchData(
+      req.body["selectedColumns"], 
+      req.body["selectedRms"], 
+      req.body["nameList"], 
+      req.body["panList"],
+      req.body["isIncludeFamily"], 
+      req.body["isOnlyHeadInfo"]
+      );
+  
+    res.json({ success: true, result: searchResult["result"], fullResult: searchResult["fullResult"], schema: schemaData });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error ' + error.message);
+  }
 });
 
 app.get('/download', async (req, res) => {  
-  file = await downloadData(searchResult);
-  res.json({success: true});
+  try {
+    file = await downloadData(searchResult);
+    res.json({success: true});
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error ' + error.message);
+  }
 });
 
 app.post('/update', async (req, res) => {
-  await updateData(req.body, schemaData)
-
-  res.json({ success: true });
+  try {
+    await updateData(req.body, schemaData)
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error ' + error.message);
+  }
 });
 
 app.post('/login', async (req, res) => {
-  config = req.body;
-  writeConfigToDisk(JSON.stringify(config));
-  res.redirect('/home')
+  try {
+    config = req.body;
+    writeConfigToDisk(JSON.stringify(config));
+    res.redirect('/home')
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error ' + error.message);
+  }
 });
 
 app.get('/add', async (req, res) => {
-  res.render('add', {columnNames: columnNames, schemaData: schemaData});
+  try {
+    res.render('add', {columnNames: columnNames, schemaData: schemaData});
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error ' + error.message);
+  }
 });
 
 app.post('/add', async (req, res) => {
-  addData(req.body)
-  res.json({success: true});
+  try {
+    addData(req.body)
+    res.json({success: true});
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error ' + error.message);
+  }
 });
 
 app.get('/headSearch', async (req, res) => {

@@ -94,6 +94,7 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
         
         // Iterating over the headPan list and populating all the members and head pans inside the updatedPanList
         headPanList.forEach(head => {
+            head = head.toLowerCase();
             updatedPanList.push(head);
             let listOfMembers = headMemberMapping[head];
             updatedPanList.push(...listOfMembers);
@@ -258,6 +259,7 @@ async function addData(data) {
 
 async function downloadData(searchResult) {
     const filePath = "./exportData.csv";
+    searchResult = searchResult['result'];
     
     // Adding the column headers
     let exportData = Object.keys(searchResult[0]).toString();
