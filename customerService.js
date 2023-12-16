@@ -83,9 +83,11 @@ function getRmNames(schemaData) {
  * @param {*} selectedRMs 
  * @returns [{"col1": "val"}]
  */
-async function searchData(selectedColumns, selectedRMs, nameList, panList, isIncludeFamily=false) {
+async function searchData(selectedColumns, selectedRMs, nameList, panList, isIncludeFamily=false, isOnlyHeadInfo=false) {
     let customerData = await populateCustomerData();
     let headMemberMapping = mapHeadAndMembers(customerData);
+    
+    // Condition to populate just the family details of the pan ids provided
     if (isIncludeFamily !== undefined && isIncludeFamily !== null && isIncludeFamily === true) {
         let headPanList = findHeadPan(panList, customerData);
         let updatedPanList = [];
@@ -98,6 +100,12 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
         });
 
         panList = updatedPanList;
+    }
+
+    // Condition to populate only the ids of the head and discard other value (Select all RMs here) 
+    if (isOnlyHeadInfo !== undefined && isOnlyHeadInfo !== null && isOnlyHeadInfo === true) {
+        let headPanList = findHeadPan(panList, customerData);
+        panList = headPanList;
     }
 
     const searchResult = {
@@ -123,6 +131,12 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
     return searchResult;
 }
 
+/**
+ * Returns the list of Pan ids of the family head, given the pan id list
+ * @param {*} panList 
+ * @param {*} customerData 
+ * @returns 
+ */
 function findHeadPan(panList, customerData) {
     let headPanList = [];
 

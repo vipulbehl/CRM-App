@@ -110,7 +110,7 @@
                                                 </select>
                                                 <button type="button" class="btn btn-outline-secondary btn-sm" id="selectedRmsButton" onclick="enableAllFields(this.id)">All</button>
 
-                                                <label>Select Columns to Display</label>
+                                                <label>Search Options</label>
                                                 <select class="js-example-basic-multiple w-100" multiple="multiple" id="selectedColumns">
                                                     <% columnNames.forEach(item => { %>
                                                         <option id="<%= item %>" name="<%= item %>" value="<%= item %>"><%= item %></option>
@@ -123,14 +123,10 @@
                                         <div class="card-body">
                                             <h4 class="card-title">Select Column Filters</h4>
                                             <div class="form-group">
-                                                <label>Single select box using select 2</label>
-                                                <select class="js-example-basic-single w-100">
-                                                    <option value="AL">Alabama</option>
-                                                    <option value="WY">Wyoming</option>
-                                                    <option value="AM">America</option>
-                                                    <option value="CA">Canada</option>
-                                                    <option value="RU">Russia</option>
-                                                </select>
+                                                <textarea class="form-control" id="panSearchTextArea" name="panSearchTextArea" rows="4" placeholder="Pan Search, enter new value at new line"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <textarea class="form-control" id="headPanSearchTextArea" name="headPanSearchTextArea" rows="4" placeholder="Head Pan Search, enter new value at new line"></textarea>
                                             </div>
         
                                             <!-- Search Button -->
