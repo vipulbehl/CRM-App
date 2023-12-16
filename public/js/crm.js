@@ -254,18 +254,26 @@ async function downloadButton() {
 
 
 /**
- * Function to enable all the selected fields for a give select tag id
+ * Function to toggle all the selected fields for a give select tag id
  * @param {*} selectId This is the id of the <select> tag
  */
-function enableAllFields(selectId) {
-    let selectElement = document.getElementById(selectId.slice(0,-6));
-    for (let i = 0; i < selectElement.options.length; i++) {
-        console.log("Printing the values for the option = " + selectElement.options[i]);
-        selectElement.options[i].selected = true;
+function toggleAllFields(selectId) {
+    let selectElementId = selectId.slice(0,-6);
+    let selectElement = document.getElementById(selectElementId);
+    
+    // Remove all buttons if the checkbox is checked, otherwise enable
+    if (selectElement.checked) {
+        selectElement.checked = false;
+    } else {
+        selectElement.checked = true;
     }
     
-    let selectElement1 = $(selectId.slice(0,-6));
-    selectElement1.trigger('change');
+    for (let i = 0; i < selectElement.options.length; i++) {
+        selectElement.options[i].selected = selectElement.checked;
+    }
+    
+    
+    $(selectElement).trigger('change');
 }
 
 

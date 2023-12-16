@@ -42,7 +42,6 @@ app.get('/', async (req, res) => {
 
 // Loading the home page
 app.get('/home', async (req, res) => {
-  // Set the good morning, afternoon and evening text nicely along with the name of the user
   try {
     schemaData = await populateSchema();
     rmNames = getRmNames(schemaData);
@@ -64,7 +63,7 @@ app.post('/search', async (req, res) => {
     req.body["isIncludeFamily"], 
     req.body["isOnlyHeadInfo"]
     );
-    
+
   res.json({ success: true, result: searchResult["result"], fullResult: searchResult["fullResult"], schema: schemaData });
 });
 

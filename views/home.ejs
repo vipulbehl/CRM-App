@@ -102,15 +102,28 @@
                                         <div class="card-body">
                                             <h4 class="card-title">Select RM/Columns</h4>
                                             <div class="form-group">
-                                                <label>Select RMs</label>
+                                                <label>Select RMs</label>   
+                                                <!-- Checkbox to toggle RMs-->
+                                                <label class="form-check-label" style="text-align: right; float: right;">
+                                                    <input type="checkbox" class="form-check-input" id="selectedRmsButton" onclick="toggleAllFields(this.id)">
+                                                    All
+                                                    <i class="input-helper"></i>
+                                                </label>
+                                                
                                                 <select class="js-example-basic-multiple w-100" multiple="multiple" id="selectedRms">
                                                     <% rmNames.forEach(item => { %>
                                                         <option id="<%= item %>" name="<%= item %>" value="<%= item %>"><%= item %></option>
                                                     <% }); %>
                                                 </select>
-                                                <button type="button" class="btn btn-outline-secondary btn-sm" id="selectedRmsButton" onclick="enableAllFields(this.id)">All</button>
+                                                
+                                                <label>Select Columns to Display</label>
+                                                 <!-- Checkbox to toggle Columns-->
+                                                 <label class="form-check-label" style="text-align: right; float: right;">
+                                                    <input type="checkbox" class="form-check-input" id="selectedColumnsButton" onclick="toggleAllFields(this.id)">
+                                                    All
+                                                    <i class="input-helper"></i>
+                                                </label>
 
-                                                <label>Search Options</label>
                                                 <select class="js-example-basic-multiple w-100" multiple="multiple" id="selectedColumns">
                                                     <% columnNames.forEach(item => { %>
                                                         <option id="<%= item %>" name="<%= item %>" value="<%= item %>"><%= item %></option>
@@ -121,7 +134,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="card-body">
-                                            <h4 class="card-title">Select Column Filters</h4>
+                                            <h4 class="card-title">Search Options</h4>
                                             <div class="form-group">
                                                 <textarea class="form-control" id="panSearchTextArea" name="panSearchTextArea" rows="4" placeholder="Pan Search, enter new value at new line"></textarea>
                                             </div>
