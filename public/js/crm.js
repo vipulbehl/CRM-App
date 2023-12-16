@@ -145,22 +145,35 @@ function submitSearchForm() {
     const selectedColumns = getSelectedSearchParams("selectedColumns");
     const selectedRms = getSelectedSearchParams("selectedRms");
 
-    let postData = {
-        selectedColumns: selectedColumns,
-        selectedRms: selectedRms
-    };
+    if (selectedColumns.length == 0 || selectedRms.length == 0) {
+        alert("Please select Columns and Rms");
+    } else {
+        let postData = {
+            selectedColumns: selectedColumns,
+            selectedRms: selectedRms
+        };
+    
+        const nameSearchTextArea = document.getElementById("nameSearchTextArea").value;
+        if (nameSearchTextArea !== undefined && nameSearchTextArea !== null && nameSearchTextArea.trim() !== "") {
+            postData["nameList"] = nameSearchTextArea.split('\n');
+        }
+        
+        const panSearchTextArea = document.getElementById("panSearchTextArea").value;
+        if (panSearchTextArea !== undefined && panSearchTextArea !== null && panSearchTextArea.trim() !== "") {
+            postData["panList"] = panSearchTextArea.split('\n');
+        }
 
-    const nameSearchTextArea = document.getElementById("nameSearchTextArea").value;
-    if (nameSearchTextArea !== undefined && nameSearchTextArea !== null && nameSearchTextArea.trim() !== "") {
-        postData["nameList"] = nameSearchTextArea.split('\n');
+        try {
+            if (postData["nameList"].length > 0 && postData["panList"].length > 0 ) {
+                alert("Choosing both Name and Pan search not allowed.");
+            }
+            return;
+        } catch (error) {
+            console.debug("Ignore this error");
+        }
+        
+        populateSearchTable(postData);
     }
-    
-    const panSearchTextArea = document.getElementById("panSearchTextArea").value;
-    if (panSearchTextArea !== undefined && panSearchTextArea !== null && panSearchTextArea.trim() !== "") {
-        postData["panList"] = panSearchTextArea.split('\n');
-    }
-    
-    populateSearchTable(postData);
 }
 
 function enableButtons(enableDisableButtonId) {
