@@ -160,7 +160,7 @@ function findHeadPan(panList, customerData) {
 
 function isIncludeCustomer(rmList, nameList, panList, customer) {
     let rm = customer["RM"];
-    let name = customer["NAME"];
+    let name = customer["Name"];
     let pan = customer["PAN"];
 
     // Checking if the customer belongs to the provided RM
@@ -172,15 +172,27 @@ function isIncludeCustomer(rmList, nameList, panList, customer) {
 
     // Checking if the customer belongs to the provided name
     if (nameList !== undefined && nameList !== null) {
-        if (!nameList.includes(name)) {
-            return false;
+        if (Array.isArray(nameList)) {
+            if (!nameList.includes(name)) {
+                return false;
+            }
+        } else {
+            if (name.trim().toLowerCase() !== nameList.trim().toLowerCase()) {
+                return false;
+            }
         }
     }
 
     // Checking if the customer belongs to the provided pan
     if (panList !== undefined && panList !== null) {
-        if (!panList.includes(pan)) {
-            return false;
+        if (Array.isArray(panList)) {
+            if (!panList.includes(pan)) {
+                return false;
+            }
+        } else {
+            if (pan.trim().toLowerCase() !== panList.trim().toLowerCase()) {
+                return false;
+            }
         }
     }
 

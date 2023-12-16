@@ -144,15 +144,21 @@ async function updateValues(rowId) {
 function submitSearchForm() {
     const selectedColumns = getSelectedSearchParams("selectedColumns");
     const selectedRms = getSelectedSearchParams("selectedRms");
-    
-    const panSearchTextArea = document.getElementById("panSearchTextArea").value;
-    let panList = panSearchTextArea.split('\n');
 
     let postData = {
         selectedColumns: selectedColumns,
-        selectedRms: selectedRms,
-        panList: panList
+        selectedRms: selectedRms
     };
+
+    const nameSearchTextArea = document.getElementById("nameSearchTextArea").value;
+    if (nameSearchTextArea !== undefined && nameSearchTextArea !== null && nameSearchTextArea.trim() !== "") {
+        postData["nameList"] = nameSearchTextArea.split('\n');
+    }
+    
+    const panSearchTextArea = document.getElementById("panSearchTextArea").value;
+    if (panSearchTextArea !== undefined && panSearchTextArea !== null && panSearchTextArea.trim() !== "") {
+        postData["panList"] = panSearchTextArea.split('\n');
+    }
 
     const headPanSearchTextArea = document.getElementById("headPanSearchTextArea").value;
     if (headPanSearchTextArea !== undefined && headPanSearchTextArea !== null && headPanSearchTextArea.trim() !== "") {
