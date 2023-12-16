@@ -100,7 +100,10 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
         panList = updatedPanList;
     }
 
-    const searchResult = []
+    const searchResult = {
+        "result": [],
+        "fullResult": []
+    }
     
     for (let i = 0; i < customerData.length; i++) {
         const customer = customerData[i];
@@ -112,7 +115,8 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
                 currentObj[col] = currentColValue === undefined ? "" : currentColValue;
             });
             currentObj["id"] = i + 2;   // Setting the correct index of the row in the search result
-            searchResult.push(currentObj);
+            searchResult["result"].push(currentObj);
+            searchResult["fullResult"].push(customer);
         }
     }
 

@@ -25,6 +25,7 @@ async function populateSearchTable(postData) {
             const resultObj = JSON.parse(result);
             const schema = resultObj["schema"]; // Key -> values
             const searchResult = resultObj["result"]; // [obj]
+            const fullSearchResult = resultObj["fullResult"];
 
             // Enable the search result box here and populate the results
             const tableCardDiv = document.getElementById("tableCard");
@@ -81,18 +82,19 @@ async function populateSearchTable(postData) {
                     }
                 });
 
-                // This is the family button.
-                // TODO - This should only be displayed when the user has the type family, otherwise it should be disabled
-                rowHtml += `<td>
-                                <button type="button" class="btn btn-dark btn-icon-text" name="familyButton" id = "${searchResult[i]["PAN"]}family" onclick="familyButton(this.id);">
-                                Family 
-                            </td>`
-
                 rowHtml += `<td>
                                 <button type="button" class="btn btn-dark btn-icon-text" id = "${rowId}0" onclick="enableButtons(this.id);">
                                     Edit               
                                 </button>
                             </td>`;
+
+                if (fullSearchResult[i]["Client/Family"] === "Family") {
+                    rowHtml += `<td>
+                                    <button type="button" class="btn btn-primary btn-rounded btn-icon" name="familyButton" id = "${fullSearchResult[i]["PAN"]}family" onclick="familyButton(this.id);">
+                                        <i class="ti-home"></i>
+                                    </button>            
+                                </td>`
+                }
 
                 row.innerHTML = rowHtml;
                 tableBody.appendChild(row);
@@ -263,24 +265,20 @@ function getDayPeriod() {
   }
 
   function familyButton(panNumber) {  
-    if (panNumber == "undefinedfamily") {
-        alert("Kindly choose PAN number from selected columns for this feature to work");
-    } else {
-        let pan = panNumber.slice(0, -6);
-        let table = document.getElementById("searchResultTable")
-        let selectedColumns = [];
-        const thElements = table.querySelector('thead').querySelectorAll('th');
+    let pan = panNumber.slice(0, -6);
+    let table = document.getElementById("searchResultTable")
+    let selectedColumns = [];
+    const thElements = table.querySelector('thead').querySelectorAll('th');
 
-        thElements.forEach(th => {
-            selectedColumns.push(th.textContent.trim());
-        });
+    thElements.forEach(th => {
+        selectedColumns.push(th.textContent.trim());
+    });
 
-        // Sending a post request for search
-        let postData = {
-            selectedColumns: selectedColumns,
-            panList: [pan],
-            isIncludeFamily: true
-        };
-        populateSearchTable(postData);
-    }
+    // Sending a post request for search
+    let postData = {
+        selectedColumns: selectedColumns,
+        panList: [pan],
+        isIncludeFamily: true
+    };
+    populateSearchTable(postData);
   }
