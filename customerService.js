@@ -173,7 +173,12 @@ function isIncludeCustomer(rmList, nameList, panList, customer) {
     // Checking if the customer belongs to the provided name
     if (nameList !== undefined && nameList !== null) {
         if (Array.isArray(nameList)) {
-            if (!nameList.includes(name)) {
+            // Checking if the name is present in the list (name can be any case and can also be a substring)
+            const filteredNames = nameList.filter(item =>
+                name.toLowerCase().includes(item.toLowerCase())
+              );
+
+            if (filteredNames === undefined || filteredNames === null || filteredNames.length==0) {
                 return false;
             }
         } else {
