@@ -81,6 +81,13 @@ async function populateSearchTable(postData) {
                     }
                 });
 
+                // This is the family button.
+                // TODO - This should only be displayed when the user has the type family, otherwise it should be disabled
+                rowHtml += `<td>
+                                <button type="button" class="btn btn-dark btn-icon-text" name="familyButton" id = "${searchResult[i]["PAN"]}family" onclick="familyButton(this.id);">
+                                Family 
+                            </td>`
+
                 rowHtml += `<td>
                                 <button type="button" class="btn btn-dark btn-icon-text" id = "${rowId}0" onclick="enableButtons(this.id);">
                                     Edit               
@@ -252,5 +259,28 @@ function getDayPeriod() {
       return 'Afternoon';
     } else {
       return 'Evening';
+    }
+  }
+
+  function familyButton(panNumber) {  
+    if (panNumber == "undefinedfamily") {
+        alert("Kindly choose PAN number from selected columns for this feature to work");
+    } else {
+        let pan = panNumber.slice(0, -6);
+        let table = document.getElementById("searchResultTable")
+        let selectedColumns = [];
+        const thElements = table.querySelector('thead').querySelectorAll('th');
+
+        thElements.forEach(th => {
+            selectedColumns.push(th.textContent.trim());
+        });
+
+        // Sending a post request for search
+        let postData = {
+            selectedColumns: selectedColumns,
+            panList: [pan],
+            isIncludeFamily: true
+        };
+        populateSearchTable(postData);
     }
   }

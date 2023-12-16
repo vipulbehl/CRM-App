@@ -78,30 +78,95 @@ function getRmNames(schemaData) {
 }
 
 /**
- * 
+ * Search based on Columns, Rms, Name, Pan, Head Pan
  * @param {*} selectedColumns 
  * @param {*} selectedRMs 
  * @returns [{"col1": "val"}]
  */
-async function searchData(selectedColumns, selectedRMs) {
-    customerData = await populateCustomerData();
+async function searchData(selectedColumns, selectedRMs, nameList, panList, isIncludeFamily=false) {
+    let customerData = await populateCustomerData();
+    let headMemberMapping = mapHeadAndMembers(customerData);
+    if (isIncludeFamily !== undefined && isIncludeFamily !== null && isIncludeFamily === true) {
+        let headPanList = findHeadPan(panList, customerData);
+        let updatedPanList = [];
+        
+        // Iterating over the headPan list and populating all the members and head pans inside the updatedPanList
+        headPanList.forEach(head => {
+            updatedPanList.push(head);
+            let listOfMembers = headMemberMapping[head];
+            updatedPanList.push(...listOfMembers);
+        });
+
+        panList = updatedPanList;
+    }
 
     const searchResult = []
     
     for (let i = 0; i < customerData.length; i++) {
         const customer = customerData[i];
-
-        if (selectedRMs.includes(customer["RM"])) {
+        
+        if (isIncludeCustomer(selectedRMs, nameList, panList, customer)) {
             currentObj = {}
             selectedColumns.forEach(col => {
-                currentObj[col] = customer[col];
-            })
+                let currentColValue = customer[col];
+                currentObj[col] = currentColValue === undefined ? "" : currentColValue;
+            });
             currentObj["id"] = i + 2;   // Setting the correct index of the row in the search result
             searchResult.push(currentObj);
         }
     }
 
     return searchResult;
+}
+
+function findHeadPan(panList, customerData) {
+    let headPanList = [];
+
+    if (panList === undefined || panList === null) {
+        return headPanList;
+    }
+
+    customerData.forEach(customer => {
+        let customerPan = customer["PAN"];
+        if (panList.includes(customerPan)) {
+            let headPan = customer["Head"];
+            if (headPan === undefined || headPan === null) {
+                headPan = customerPan;
+            }
+            headPanList.push(headPan);
+        }
+    });
+
+    return headPanList;
+}
+
+function isIncludeCustomer(rmList, nameList, panList, customer) {
+    let rm = customer["RM"];
+    let name = customer["NAME"];
+    let pan = customer["PAN"];
+
+    // Checking if the customer belongs to the provided RM
+    if (rmList !== undefined && rmList !== null) {
+        if (!rmList.includes(rm)) {
+            return false;
+        }
+    }
+
+    // Checking if the customer belongs to the provided name
+    if (nameList !== undefined && nameList !== null) {
+        if (!nameList.includes(name)) {
+            return false;
+        }
+    }
+
+    // Checking if the customer belongs to the provided pan
+    if (panList !== undefined && panList !== null) {
+        if (!panList.includes(pan)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 async function addData(data) {
@@ -187,6 +252,30 @@ function getDayPeriod() {
     } else {
       return 'Evening';
     }
+  }
+
+  function mapHeadAndMembers(customerData) {
+    let headMemberMapping = {}
+    customerData.forEach(customer => {
+        let headPanId = customer["Head"];
+        let customerPan = customer["PAN"];
+
+        // Condition where the head is empty, meaning the customer himself is the head
+        if (headPanId === undefined || headPanId === null || headPanId.trim() === "") {    
+            if (!headMemberMapping[customerPan]) {
+                headMemberMapping[customerPan] = [];
+            }
+            headMemberMapping[customerPan].push()
+        } else {
+            // Condition to add the member inside head's pan
+            if (!headMemberMapping[headPanId]) {
+                headMemberMapping[headPanId] = [];
+            }
+            headMemberMapping[headPanId].push(customerPan);
+        }
+    });
+
+    return headMemberMapping;
   }
 
 module.exports = {

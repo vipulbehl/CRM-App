@@ -56,7 +56,7 @@ app.get('/home', async (req, res) => {
 
 // Loading the search results
 app.post('/search', async (req, res) => {
-  searchResult = await searchData(req.body["selectedColumns"], req.body["selectedRms"]);
+  searchResult = await searchData(req.body["selectedColumns"], req.body["selectedRms"], req.body["nameList"], req.body["panList"], req.body['isIncludeFamily']);
   res.json({ success: true, result: searchResult, schema: schemaData });
 });
 
