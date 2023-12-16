@@ -159,12 +159,6 @@ function submitSearchForm() {
     if (panSearchTextArea !== undefined && panSearchTextArea !== null && panSearchTextArea.trim() !== "") {
         postData["panList"] = panSearchTextArea.split('\n');
     }
-
-    const headPanSearchTextArea = document.getElementById("headPanSearchTextArea").value;
-    if (headPanSearchTextArea !== undefined && headPanSearchTextArea !== null && headPanSearchTextArea.trim() !== "") {
-        postData["panList"] = headPanSearchTextArea.split('\n');
-        postData["isOnlyHeadInfo"] = true;
-    }
     
     populateSearchTable(postData);
 }
@@ -304,3 +298,82 @@ function getDayPeriod() {
     };
     populateSearchTable(postData);
   }
+
+  function submitHeadSearchForm() {
+    const selectedColumns = getSelectedSearchParams("selectedColumns");
+    const selectedRms = getSelectedSearchParams("selectedRms");
+
+    let postData = {
+        selectedColumns: selectedColumns,
+        selectedRms: selectedRms
+    };
+
+    const headPanSearchTextArea = document.getElementById("headPanSearchTextArea").value;
+    if (headPanSearchTextArea !== undefined && headPanSearchTextArea !== null && headPanSearchTextArea.trim() !== "") {
+        postData["panList"] = headPanSearchTextArea.split('\n');
+        postData["isOnlyHeadInfo"] = true;
+    }
+    
+    populateHeadSearchTable(postData);
+}
+
+async function populateHeadSearchTable(postData) {
+    try {
+        const response = await fetch('/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        });
+
+        if (response.ok) {
+            // Populate the search table
+            const result = await response.text();
+            const resultObj = JSON.parse(result);
+            const schema = resultObj["schema"]; // Key -> values
+            const searchResult = resultObj["result"]; // [obj]
+
+            // Enable the search result box here and populate the results
+            const tableCardDiv = document.getElementById("tableCard");
+            tableCardDiv.style.display = 'block'
+
+            const searchResultTable = document.getElementById("searchResultTable");
+            searchResultTable.innerHTML = '';
+
+            // Populating the headers
+            let tableHeader = document.createElement('thead');
+            let row = document.createElement('tr');
+            Object.keys(searchResult[0]).forEach(item => {
+                if (item != "id") {
+                    row.innerHTML += `<th>${item}</th>`;
+                }
+            });
+            tableHeader.appendChild(row);
+            searchResultTable.appendChild(tableHeader);
+
+            // Populating the data
+            let tableBody = document.createElement('tbody');
+            // Iterating over the rows
+            for (let i = 0; i < searchResult.length; i++) {
+                let row = document.createElement('tr');
+
+                // Looping over each column inside the row
+                let rowHtml = "";
+                let enableIds = []
+                Object.keys(searchResult[i]).forEach(col => {
+                    let columnValue = searchResult[i][col];
+                    rowHtml += `<td><input type="text" id="${columnValue}" value="${columnValue}" disabled></td>`;
+                });
+
+                row.innerHTML = rowHtml;
+                tableBody.appendChild(row);
+            }
+            searchResultTable.appendChild(tableBody);
+        } else {
+            console.error('Error:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+}

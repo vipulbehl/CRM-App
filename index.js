@@ -93,6 +93,18 @@ app.post('/add', async (req, res) => {
   res.json({success: true});
 });
 
+app.get('/headSearch', async (req, res) => {
+  try {
+    schemaData = await populateSchema();
+    rmNames = getRmNames(schemaData);
+    columnNames = Object.keys(schemaData);
+    res.render('headSearch', { rmNames: rmNames, columnNames: columnNames, config: config, dayPeriod: getDayPeriod() });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
   console.log("Credentials file ", process.env.GOOGLE_APPLICATION_CREDENTIALS)

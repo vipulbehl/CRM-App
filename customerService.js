@@ -104,14 +104,13 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
 
     // Condition to populate only the ids of the head and discard other value (Select all RMs here) 
     if (isOnlyHeadInfo !== undefined && isOnlyHeadInfo !== null && isOnlyHeadInfo === true) {
-        let headPanList = findHeadPan(panList, customerData);
-        panList = headPanList;
+        return findHeadSearchData(panList, customerData, selectedColumns);
     }
 
     const searchResult = {
         "result": [],
         "fullResult": []
-    }
+    };
     
     for (let i = 0; i < customerData.length; i++) {
         const customer = customerData[i];
@@ -129,6 +128,47 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
     }
 
     return searchResult;
+}
+
+function findHeadSearchData(panList, customerData, selectedColumns) {
+    const searchResult = {
+        "result": []
+    };
+
+    panList.forEach(memberPan => {
+        // Populate the member name and pan
+        let memberDict = getMemberDetails(memberPan, customerData);
+        let memberName = memberDict["Name"];
+        
+        // Get the head pan id for the given pan
+        let headPan = findHeadPan([memberPan], customerData)[0];
+
+        // Fetch all the details of the head pan
+        let headDict = getMemberDetails(headPan, customerData);
+
+        // Filter the head pan details based on the selected columns
+        let currentObj = {"Member Name": memberName, "Member Pan": memberPan};
+        selectedColumns.forEach(col => {
+            let currentColValue = headDict[col];
+            currentObj[col] = currentColValue === undefined ? "" : currentColValue;
+        });
+
+        // Add the details in the result list
+        searchResult["result"].push(currentObj);
+    });
+
+    return searchResult;
+}
+
+function getMemberDetails(panId, customerData) {
+    let customerDetail;
+    customerData.forEach(customer => {
+        let customerPanId = customer["PAN"];
+        if (customerPanId.toLowerCase() === panId.toLowerCase()) {
+            customerDetail = customer;
+        }
+    });
+    return customerDetail;
 }
 
 /**
