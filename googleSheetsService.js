@@ -7,7 +7,7 @@ async function getAuthToken() {
   const auth = new google.auth.GoogleAuth({
     scopes: SCOPES
   });
-  authToken = await auth.getClient();
+  let authToken = await auth.getClient();
   return authToken;
 }
 

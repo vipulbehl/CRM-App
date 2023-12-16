@@ -309,7 +309,6 @@ function getDayPeriod() {
   }
 
 module.exports = {
-    populateCustomerData,
     getRmNames,
     searchData,
     addData,

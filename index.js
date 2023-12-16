@@ -3,7 +3,6 @@ require("dotenv").config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const bodyParser = require('body-parser');
 const {
-  populateCustomerData,
   getRmNames,
   searchData,
   addData,
@@ -30,6 +29,7 @@ let schemaData
 let searchResult
 let config
 
+// Loading the login page
 app.get('/', async (req, res) => {
   config = await populateConfig();
 

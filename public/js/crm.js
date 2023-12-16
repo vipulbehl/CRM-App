@@ -262,17 +262,14 @@ function toggleAllFields(selectId) {
     let selectElement = document.getElementById(selectElementId);
     
     // Remove all buttons if the checkbox is checked, otherwise enable
-    if (selectElement.checked) {
-        selectElement.checked = false;
-    } else {
-        selectElement.checked = true;
-    }
+    selectElement.checked ? (selectElement.checked = false) : (selectElement.checked = true);
+
     
     for (let i = 0; i < selectElement.options.length; i++) {
         selectElement.options[i].selected = selectElement.checked;
     }
     
-    
+    // Trigger a change event for the options to load in the select box
     $(selectElement).trigger('change');
 }
 
