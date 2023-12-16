@@ -144,9 +144,12 @@ function findHeadPan(panList, customerData) {
         return headPanList;
     }
 
+    let lowerCasePanList = panList.map(item => item.toLowerCase());
+
     customerData.forEach(customer => {
-        let customerPan = customer["PAN"];
-        if (panList.includes(customerPan)) {
+        let customerPan = customer["PAN"].toLowerCase();
+
+        if (lowerCasePanList.includes(customerPan)) {
             let headPan = customer["Head"];
             if (headPan === undefined || headPan === null) {
                 headPan = customerPan;
@@ -178,7 +181,7 @@ function isIncludeCustomer(rmList, nameList, panList, customer) {
                 name.toLowerCase().includes(item.toLowerCase())
               );
 
-            if (filteredNames === undefined || filteredNames === null || filteredNames.length==0) {
+            if (filteredNames === undefined || filteredNames === null || filteredNames.length == 0) {
                 return false;
             }
         } else {
@@ -191,7 +194,10 @@ function isIncludeCustomer(rmList, nameList, panList, customer) {
     // Checking if the customer belongs to the provided pan
     if (panList !== undefined && panList !== null) {
         if (Array.isArray(panList)) {
-            if (!panList.includes(pan)) {
+            let lowerCasePanList = panList.filter(item =>
+                item.toLowerCase() === pan.toLowerCase()
+            );
+            if (lowerCasePanList === undefined || lowerCasePanList === null || lowerCasePanList.length == 0) {
                 return false;
             }
         } else {
@@ -297,16 +303,18 @@ function getDayPeriod() {
 
         // Condition where the head is empty, meaning the customer himself is the head
         if (headPanId === undefined || headPanId === null || headPanId.trim() === "") {    
-            if (!headMemberMapping[customerPan]) {
-                headMemberMapping[customerPan] = [];
+            let customerPanIdLowerCase = customerPan.toLowerCase();
+            if (!headMemberMapping[customerPanIdLowerCase]) {
+                headMemberMapping[customerPanIdLowerCase] = [];
             }
-            headMemberMapping[customerPan].push()
+            headMemberMapping[customerPanIdLowerCase].push()
         } else {
             // Condition to add the member inside head's pan
-            if (!headMemberMapping[headPanId]) {
-                headMemberMapping[headPanId] = [];
+            let headPanIdLowerCase = headPanId.toLowerCase();
+            if (!headMemberMapping[headPanIdLowerCase]) {
+                headMemberMapping[headPanIdLowerCase] = [];
             }
-            headMemberMapping[headPanId].push(customerPan);
+            headMemberMapping[headPanIdLowerCase].push(customerPan);
         }
     });
 
