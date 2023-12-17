@@ -191,7 +191,7 @@ function findHeadPan(panList, customerData) {
         let customerPan = customer["PAN"].toLowerCase();
 
         if (lowerCasePanList.includes(customerPan)) {
-            let headPan = customer["Head"];
+            let headPan = customer["Head Pan"];
             if (headPan === undefined || headPan === null) {
                 headPan = customerPan;
             }
@@ -245,6 +245,14 @@ function isIncludeCustomer(rmList, nameList, panList, customer) {
             if (pan.trim().toLowerCase() !== panList.trim().toLowerCase()) {
                 return false;
             }
+        }
+    }
+
+    // If the name and pan list is empty, don't display the family members. We only want the head of the family in that case
+    if ( (panList === undefined || panList === null) && (nameList === undefined || nameList === null) ) {
+        let head = customer["Head Pan"];
+        if (head !== null && head !== undefined && head.trim() !== "") {
+            return false;
         }
     }
 
@@ -340,7 +348,7 @@ function getDayPeriod() {
   function mapHeadAndMembers(customerData) {
     let headMemberMapping = {}
     customerData.forEach(customer => {
-        let headPanId = customer["Head"];
+        let headPanId = customer["Head Pan"];
         let customerPan = customer["PAN"];
 
         // Condition where the head is empty, meaning the customer himself is the head

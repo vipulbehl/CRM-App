@@ -256,7 +256,17 @@ function addClientForm() {
     let postData = {
         values: values
     };
-    addClient(postData);
+
+    try {
+        validateAddClient();
+        addClient(postData);
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+function validateAddClient() {
+    
 }
 
 async function downloadButton() {
