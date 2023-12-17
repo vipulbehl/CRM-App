@@ -109,8 +109,13 @@
                                                 </label>
                                                 
                                                 <select class="js-example-basic-multiple w-100" multiple="multiple" id="selectedRms">
-                                                    <% rmNames.forEach(item => { %>
-                                                        <option id="<%= item %>" name="<%= item %>" value="<%= item %>"><%= item %></option>
+                                                    <% let chosenRms = config['selectedRms'] %>
+                                                    <% rmNames.forEach(item => {
+                                                        if (chosenRms.includes(item)) { %>
+                                                            <option id="<%= item %>" name="<%= item %>" value="<%= item %>" selected><%= item %></option>
+                                                        <% } else { %>
+                                                            <option id="<%= item %>" name="<%= item %>" value="<%= item %>"><%= item %></option>
+                                                        <% } %>
                                                     <% }); %>
                                                 </select>
 

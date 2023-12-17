@@ -101,6 +101,8 @@ app.post('/update', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     config = req.body;
+    config["selectedRms"] = [];
+    config["selectedColumns"] = [];
     writeConfigToDisk(JSON.stringify(config));
     res.redirect('/home')
   } catch (error) {

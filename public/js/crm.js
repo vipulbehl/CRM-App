@@ -155,6 +155,7 @@ function submitSearchForm(config) {
         };
 
         configValue['selectedColumns'] = selectedColumns;
+        configValue['selectedRms'] = selectedRms;
 
         const nameSearchTextArea = document.getElementById("nameSearchTextArea").value;
         if (nameSearchTextArea !== undefined && nameSearchTextArea !== null && nameSearchTextArea.trim() !== "") {
@@ -266,7 +267,7 @@ function addClientForm() {
 }
 
 function validateAddClient() {
-    
+
 }
 
 async function downloadButton() {
