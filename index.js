@@ -109,6 +109,17 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/writeConfig', async (req, res) => {
+  try {
+    config = req.body;
+    writeConfigToDisk(JSON.stringify(config));
+    res.json({ success: true});
+  } catch(error) {
+    console.error("Unable to write config file to disk" + error.message);
+    res.json({ success: false});
+  }
+});
+
 app.get('/add', async (req, res) => {
   try {
     res.render('add', {columnNames: columnNames, schemaData: schemaData});

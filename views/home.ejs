@@ -125,8 +125,13 @@
                                                 </label>
 
                                                 <select class="js-example-basic-multiple w-100" multiple="multiple" id="selectedColumns">
-                                                    <% columnNames.forEach(item => { %>
-                                                        <option id="<%= item %>" name="<%= item %>" value="<%= item %>"><%= item %></option>
+                                                    <% let chosenColumns = config['selectedColumns'] %>
+                                                    <% columnNames.forEach(item => { 
+                                                        if (chosenColumns.includes(item)) { %>
+                                                            <option id="<%= item %>" name="<%= item %>" value="<%= item %>" selected><%= item %></option>
+                                                        <% } else { %>
+                                                            <option id="<%= item %>" name="<%= item %>" value="<%= item %>"><%= item %></option>
+                                                        <% } %>
                                                     <% }); %>
                                                 </select>
                                             </div>
@@ -143,7 +148,7 @@
                                             </div>
         
                                             <!-- Search Button -->
-                                            <button type="button" class="btn btn-success" id="searchFormButton" onclick="submitSearchForm()">Search</button>
+                                            <button type="button" class="btn btn-success" id="searchFormButton" onclick="submitSearchForm('<%= JSON.stringify(config) %>')">Search</button>
                                         </div>
                                     </div>
                                 </div>

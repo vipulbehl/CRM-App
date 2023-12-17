@@ -141,7 +141,8 @@ async function updateValues(rowId) {
     }
 }
 
-function submitSearchForm() {
+function submitSearchForm(config) {
+    let configValue = JSON.parse(config);
     const selectedColumns = getSelectedSearchParams("selectedColumns");
     const selectedRms = getSelectedSearchParams("selectedRms");
 
@@ -152,7 +153,9 @@ function submitSearchForm() {
             selectedColumns: selectedColumns,
             selectedRms: selectedRms
         };
-    
+
+        configValue['selectedColumns'] = selectedColumns;
+
         const nameSearchTextArea = document.getElementById("nameSearchTextArea").value;
         if (nameSearchTextArea !== undefined && nameSearchTextArea !== null && nameSearchTextArea.trim() !== "") {
             postData["nameList"] = nameSearchTextArea.split('\n');
@@ -173,6 +176,7 @@ function submitSearchForm() {
         }
         
         populateSearchTable(postData);
+        writeConfigToDisk(configValue);
     }
 }
 
@@ -216,6 +220,20 @@ async function addClient(postData) {
         } else {
             alert("Client Succesfully Added");
         }
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+}
+
+async function writeConfigToDisk(config) {
+    try {
+        const response = await fetch('/writeConfig', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(config)
+        });
     } catch (error) {
         console.error('Error:', error.message);
     }
