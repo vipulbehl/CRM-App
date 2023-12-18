@@ -116,7 +116,11 @@ async function updateValues(rowId) {
     // Get all the fields 
     let fieldsList = document.getElementsByName(rowId);
     fieldsList.forEach(field => {
-        values.push(field.value);
+        let value = field.value;
+        if (value !== null && value !== undefined) {
+            value = value.trim();
+        }
+        values.push(value);
     });
 
     let postData = {
@@ -160,12 +164,12 @@ function submitSearchForm(config) {
 
         const nameSearchTextArea = document.getElementById("nameSearchTextArea").value;
         if (nameSearchTextArea !== undefined && nameSearchTextArea !== null && nameSearchTextArea.trim() !== "") {
-            postData["nameList"] = nameSearchTextArea.split('\n');
+            postData["nameList"] = nameSearchTextArea.split('\n').map(value => (value !== null && value !== undefined) ? value.trim() : value);
         }
         
         const panSearchTextArea = document.getElementById("panSearchTextArea").value;
         if (panSearchTextArea !== undefined && panSearchTextArea !== null && panSearchTextArea.trim() !== "") {
-            postData["panList"] = panSearchTextArea.split('\n');
+            postData["panList"] = panSearchTextArea.split('\n').map(value => (value !== null && value !== undefined) ? value.trim() : value);
         }
 
         try {
@@ -246,12 +250,17 @@ async function addClientForm(schemaData) {
     let formElements = addClientForm.querySelectorAll('input, select, textarea');
     let values = [];
     formElements.forEach(function(element) {
-        var value;
+        let value;
         if (element.type === 'checkbox' || element.type === 'radio') {
             value = element.checked ? element.value : null;
         } else {
             value = element.value;
         }
+
+        if (value !== null && value !== undefined) {
+            value = value.trim();
+        }
+
         values.push(value);
     });
 
@@ -416,7 +425,7 @@ function getDayPeriod() {
 
     const headPanSearchTextArea = document.getElementById("headPanSearchTextArea").value;
     if (headPanSearchTextArea !== undefined && headPanSearchTextArea !== null && headPanSearchTextArea.trim() !== "") {
-        postData["panList"] = headPanSearchTextArea.split('\n');
+        postData["panList"] = headPanSearchTextArea.split('\n').map(value => (value !== null && value !== undefined) ? value.trim() : value);
         postData["isOnlyHeadInfo"] = true;
     }
     

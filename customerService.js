@@ -31,7 +31,11 @@ async function populateCustomerData() {
 
             // Iterate through each header and add the corresponding value to the object
             headers.forEach((header, index) => {
-                currentObject[header] = currentRow[index];
+                let currentValue = currentRow[index];
+                if (currentValue !== null && currentValue !== undefined) {
+                    currentValue = currentValue.trim();
+                }
+                currentObject[header] = currentValue;
             });
 
             // Adding the row number in the object
