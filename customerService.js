@@ -371,6 +371,17 @@ function getDayPeriod() {
     return headMemberMapping;
   }
 
+  async function findPan(panId) {
+    let customerData = await populateCustomerData();
+    for (let customer of customerData) {
+        let customerPan = customer["PAN"].trim();
+        if (customerPan === panId.trim()) {
+            return "Pan already present";
+        }
+    }
+    return null;
+  }
+
 module.exports = {
     getRmNames,
     searchData,
@@ -380,5 +391,6 @@ module.exports = {
     updateData,
     populateConfig,
     writeConfigToDisk,
-    getDayPeriod
+    getDayPeriod,
+    findPan
 }

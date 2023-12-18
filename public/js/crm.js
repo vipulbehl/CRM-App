@@ -88,6 +88,7 @@ async function populateSearchTable(postData) {
                                 </button>
                             </td>`;
 
+                // Show the family button
                 if (fullSearchResult[i]["Client/Family"] === "Family") {
                     rowHtml += `<td>
                                     <button type="button" class="btn btn-primary btn-rounded btn-icon" name="familyButton" id = "${fullSearchResult[i]["PAN"]}family" onclick="familyButton(this.id);">
@@ -240,7 +241,7 @@ async function writeConfigToDisk(config) {
     }
 }
 
-function addClientForm() {
+async function addClientForm(schemaData) {
     const addClientForm = document.getElementById("addClientForm");
     let formElements = addClientForm.querySelectorAll('input, select, textarea');
     let values = [];
@@ -259,15 +260,78 @@ function addClientForm() {
     };
 
     try {
-        validateAddClient();
+        await validateAddClient(values, schemaData);
         addClient(postData);
     } catch (error) {
         alert(error.message);
     }
 }
 
-function validateAddClient() {
+// All the validations during the add client goes into this function
+async function validateAddClient(inputValuesList, schemaData) {
 
+    // Check if pan and name fields are provided
+    let schemaFieldList = schemaData.split(",");
+    
+    // Iterate the schemaFieldList and check the corresponding index in inputValuesList for Pan and Name
+    let isFamilyMember = false;
+    for (let i = 0; i < schemaFieldList.length; i++) {
+        let currentField = schemaFieldList[i].trim();
+        if (currentField === "PAN") {
+            let providedValueForField = inputValuesList[i].trim();
+            if (providedValueForField === undefined || providedValueForField === null || providedValueForField === "") {
+                throw Error(currentField + " cannot be empty");
+            }
+            let isDuplicatePanPresent = await checkDuplicatePan(providedValueForField);
+            if (isDuplicatePanPresent) {
+                throw Error(currentField + " Already exists");
+            }
+        }
+        if (currentField === "Name") {
+            let providedValueForField = inputValuesList[i].trim();
+            if (providedValueForField === undefined || providedValueForField === null || providedValueForField === "") {
+                throw Error(currentField + " cannot be empty");
+            }
+        }
+
+        // Validating if Family Member is provided then Head Pan cannot be empty
+        if (currentField === "Client/Family") {
+            let providedValueForField = inputValuesList[i].trim();
+            if (providedValueForField !== undefined || providedValueForField !== null || providedValueForField !== "") {
+                isFamilyMember = providedValueForField === "Family Member";
+            }
+        }
+
+        if (currentField === "Head Pan" && isFamilyMember) {
+            let providedValueForField = inputValuesList[i].trim();
+            if (providedValueForField === undefined || providedValueForField === null || providedValueForField === "") {
+                throw Error(currentField + " cannot be empty while adding Family Member");
+            }
+        }
+    }
+}
+
+async function checkDuplicatePan(pan) {
+    try {
+        let postData = {
+            pan: pan
+        };
+        const response = await fetch('/searchPan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        });
+
+        if (response.ok) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        return false;
+    }
 }
 
 async function downloadButton() {

@@ -11,8 +11,10 @@ const {
   updateData,
   populateConfig,
   writeConfigToDisk,
-  getDayPeriod
-} = require("./customerService.js")
+  getDayPeriod,
+  findPan
+} = require("./customerService.js");
+const { error } = require('console');
 
 const app = express();
 const port = 3000;
@@ -73,7 +75,6 @@ app.post('/search', async (req, res) => {
   
     res.json({ success: true, result: searchResult["result"], fullResult: searchResult["fullResult"], schema: schemaData });
   } catch (error) {
-    console.error('Error:', error.message);
     res.status(500).send('Internal Server Error ' + error.message);
   }
 });
@@ -150,6 +151,15 @@ app.get('/headSearch', async (req, res) => {
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).send('Internal Server Error');
+  }
+});
+
+app.post('/searchPan', async (req, res) => {
+  result = await findPan(req.body["pan"]);
+  if (result === undefined || result === null || result.trim() === "") {
+    res.status(400).send(error.message);
+  } else {
+    res.json({ success: true});
   }
 });
 
