@@ -55,7 +55,7 @@ app.get('/home', async (req, res) => {
     schemaData = await populateSchema();
     rmNames = getRmNames(schemaData);
     columnNames = Object.keys(schemaData);
-    res.render('home', { rmNames: rmNames, columnNames: columnNames, config: config, dayPeriod: getDayPeriod() });
+    res.render('home', { rmNames: rmNames, columnNames: columnNames, config: config, dayPeriod: getDayPeriod(), schemaData: schemaData });
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).send('Internal Server Error ' + error.message);
@@ -71,7 +71,8 @@ app.post('/search', async (req, res) => {
       req.body["nameList"], 
       req.body["panList"],
       req.body["isIncludeFamily"], 
-      req.body["isOnlyHeadInfo"]
+      req.body["isOnlyHeadInfo"],
+      req.body["filters"]
       );
   
     res.json({ success: true, result: searchResult["result"], fullResult: searchResult["fullResult"], schema: schemaData });

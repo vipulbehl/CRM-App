@@ -100,7 +100,7 @@ function getRmNames(schemaData) {
  * @param {*} selectedRMs 
  * @returns [{"col1": "val"}]
  */
-async function searchData(selectedColumns, selectedRMs, nameList, panList, isIncludeFamily=false, isOnlyHeadInfo=false) {
+async function searchData(selectedColumns, selectedRMs, nameList, panList, isIncludeFamily=false, isOnlyHeadInfo=false, filters) {
     let customerData = await populateCustomerData();
     let headMemberMapping = mapHeadAndMembers(customerData);
     
@@ -135,13 +135,26 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
         
         if (isIncludeCustomer(selectedRMs, nameList, panList, customer)) {
             currentObj = {}
+            let addObject = true;
             selectedColumns.forEach(col => {
                 let currentColValue = customer[col];
                 currentObj[col] = currentColValue === undefined ? "" : currentColValue;
+                
+                // Applying filters
+                if (filters !== null && filters !== undefined) {
+                    if (col in filters) {
+                        let filterValue = filters[col];
+                        if (!filterValue.includes(currentColValue)) {
+                            addObject = false;
+                        }
+                    }
+                }
             });
-            currentObj["id"] = customer["id"];   // Setting the correct index of the row in the search result
-            searchResult["result"].push(currentObj);
-            searchResult["fullResult"].push(customer);
+            if (addObject) {
+                currentObj["id"] = customer["id"];   // Setting the correct index of the row in the search result
+                searchResult["result"].push(currentObj);
+                searchResult["fullResult"].push(customer);
+            }
         }
     }
 

@@ -119,7 +119,7 @@
                                                     <% }); %>
                                                 </select>
 
-                                                <br><br>
+                                                <br><br><br>
                                                 
                                                 <label>Select Columns to Display</label>
                                                  <!-- Checkbox to toggle Columns-->
@@ -140,16 +140,22 @@
                                                     <% }); %>
                                                 </select>
                                             </div>
+                                            
+                                            <!-- Filter Button -->
+                                            <br>
+                                            <button type="button" class="btn btn-success" id="filterToggleButton" onclick="filterToggle()" style="float: right;">Filter</button>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="card-body">
                                             <h4 class="card-title">Search Options</h4>
+                                            <h6>By Pan</h6>
                                             <div class="form-group">
-                                                <textarea class="form-control" id="panSearchTextArea" name="panSearchTextArea" rows="4" style="height: 70px;" placeholder="Pan Search, enter new value at new line"></textarea>
+                                                <textarea class="form-control" id="panSearchTextArea" name="panSearchTextArea" rows="4" style="height: 62px;" placeholder="Pan Search, enter new value at new line"></textarea>
                                             </div>
+                                            <h6>By Name</h6>
                                             <div class="form-group">
-                                                <textarea class="form-control" id="nameSearchTextArea" name="nameSearchTextArea" rows="4" style="height: 70px;" placeholder="Name Search, enter new value at new line"></textarea>
+                                                <textarea class="form-control" id="nameSearchTextArea" name="nameSearchTextArea" rows="4" style="height: 62px;" placeholder="Name Search, enter new value at new line"></textarea>
                                             </div>
         
                                             <!-- Search Button -->
@@ -162,6 +168,48 @@
                     </div>
                     </form>
 
+                    <form class="forms-sample" id="filterCard" style="display: none;">
+                        <div class="row">
+                            <div class="col-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <h4 class="card-title">Filters</h4>
+                                                        <table>
+                                                            <tr>
+                                                        <% let schemaKeys = Object.keys(schemaData); 
+                                                            for (let i=0; i<schemaKeys.length; i++) {
+                                                            let key = schemaKeys[i];
+                                                            let objectOfSchema = JSON.parse(schemaData[key][0]);
+                                                            let typeOfObject = objectOfSchema["type"];
+                                                            let validValues = objectOfSchema["values"];
+
+                                                            if (typeOfObject === "Dropdown") { %>
+                                                                <td style="padding-right: 80px;">
+                                                                <h4 class="card-title"><%= key %></h4>
+                                                                <select class="js-example-basic-multiple w-100" multiple="multiple" style="width: 100px;" id="Filter<%= key%>">
+                                                                    <% validValues.forEach(item => { %>
+                                                                        <option id="<%= item %>" name="<%= item %>" value="<%= item %>"><%= item %></option>
+                                                                    <% }); %>
+                                                                </select>
+                                                                </td>
+                                                            <% }
+                                                           }
+                                                        %>
+                                                        </tr>
+                                                        </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    
                     <!-- Card to display the table -->
                     <div class="col-lg-12 grid-margin stretch-card" style="display: none" id="tableCard">
                         <div class="card">

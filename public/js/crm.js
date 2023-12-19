@@ -90,22 +90,23 @@ async function populateSearchTable(postData) {
                                 </button>
                             `;
 
-                // Delete Button
-                rowHtml += `
-                                <button type="button" class="btn btn-social-icon btn-youtube btn-rounded" id = "0${rowId}" onclick="deleteRow(this.id);" style="margin-right: 10px;">
-                                    <i class="mdi mdi-delete"></i>
-                                </button>
-                            `;
-
                 // Show the family button
                 if (fullSearchResult[i]["Client/Family"] === "Family") {
                     rowHtml += `
                                     <button type="button" class="btn btn-social-icon btn-linkedin btn-rounded" name="familyButton" id = "${fullSearchResult[i]["PAN"]}family" onclick="familyButton(this.id);">
-                                        <i class="mdi mdi-account-box"></i>
+                                        <i class="mdi mdi-home"></i>
                                     </button>            
                                 `
                 }
                 rowHtml += `</td>`;
+
+                // Delete Button
+                rowHtml += ` <td>
+                                <button type="button" class="btn btn-social-icon btn-youtube btn-rounded" id = "0${rowId}" onclick="deleteRow(this.id);" style="margin-right: 10px;">
+                                    <i class="mdi mdi-delete"></i>
+                                </button>
+                             </td>
+                            `;
 
                 row.innerHTML = rowHtml;
                 tableBody.appendChild(row);
@@ -186,13 +187,15 @@ function submitSearchForm(config) {
     let configValue = JSON.parse(config);
     const selectedColumns = getSelectedSearchParams("selectedColumns");
     const selectedRms = getSelectedSearchParams("selectedRms");
+    const filters = getFilters(config);
 
     if (selectedColumns.length == 0 || selectedRms.length == 0) {
         alert("Please select Columns and Rms");
     } else {
         let postData = {
             selectedColumns: selectedColumns,
-            selectedRms: selectedRms
+            selectedRms: selectedRms,
+            filters: filters
         };
 
         configValue['selectedColumns'] = selectedColumns;
@@ -220,6 +223,24 @@ function submitSearchForm(config) {
         populateSearchTable(postData);
         writeConfigToDisk(configValue);
     }
+}
+
+function getFilters(config) {
+    let filters = {};
+    let selectedColumns = JSON.parse(config)["selectedColumns"];
+    
+    selectedColumns.forEach(column => {
+        let filterSelectId = "Filter" + column;
+        let filterSelectTag = document.getElementById(filterSelectId);
+        if (filterSelectTag !== null && filterSelectTag !== undefined) {
+            let selectedValuesForColumn = getSelectedSearchParams(filterSelectId);
+            if (selectedValuesForColumn !== null && selectedValuesForColumn != undefined && selectedValuesForColumn.length !== 0) {
+                filters[column] = selectedValuesForColumn;
+            }
+        }
+    });
+    
+    return filters;
 }
 
 function enableButtons(enableDisableButtonId) {
@@ -545,4 +566,16 @@ async function login() {
         })
         });
     }
+}
+
+async function filterToggle() {
+    const filterCardDiv = document.getElementById("filterCard");
+    let filterCardVisibility = filterCardDiv.style.display;
+
+    if (filterCardVisibility !== 'block') {
+        filterCardDiv.style.display = 'block';
+    } else {
+        filterCardDiv.style.display = 'none';
+    }
+
 }
