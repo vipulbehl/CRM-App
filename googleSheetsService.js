@@ -48,7 +48,7 @@ async function updateSpreadSheetValue({ spreadsheetId, auth, range, values }) {
     range: range,
     valueInputOption: 'USER_ENTERED',
     resource: {
-      values: [[values]]
+      values: [values]
     }
   })
 }

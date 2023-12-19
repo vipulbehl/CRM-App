@@ -30,12 +30,13 @@
               </div>
               <h4>Hello! let's get started</h4>
               <h6 class="fw-light">Enter your name to continue.</h6>
-              <form class="pt-3" action="/login" method="post">
+              <form class="pt-3">
                 <div class="form-group">
-                  <input class="form-control form-control-lg" type="text" id="loginName" name="loginName" placeholder="Name">
+                  <input class="form-control form-control-lg" type="text" id="loginName" name="loginName" placeholder="Name" required>
+                  <input class="form-control form-control-lg" type="password" id="passwordField" name="passwordField" placeholder="Password" required>
                 </div>
                 <div>
-                    <button class="btn btn-outline-secondary btn-sm" type="submit">Log In</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="login()">Log In</button>
                 </div>
               </form>
             </div>

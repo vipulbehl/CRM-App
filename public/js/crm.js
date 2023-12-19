@@ -51,6 +51,7 @@ async function populateSearchTable(postData) {
             for (let i = 0; i < searchResult.length; i++) {
                 let rowId = searchResult[i]['id'];
                 let row = document.createElement('tr');
+                row.id = rowId + "table";
 
                 // Looping over each column inside the row
                 let rowHtml = "";
@@ -82,20 +83,29 @@ async function populateSearchTable(postData) {
                     }
                 });
 
+                // Edit Button
                 rowHtml += `<td>
-                                <button type="button" class="btn btn-dark btn-icon-text" id = "${rowId}0" onclick="enableButtons(this.id);">
-                                    Edit               
+                                <button type="button" class="btn btn-social-icon btn-twitter btn-rounded" id = "${rowId}0" onclick="enableButtons(this.id);" style="margin-right: 10px;">
+                                    <i class="mdi mdi-grease-pencil"></i>               
                                 </button>
-                            </td>`;
+                            `;
+
+                // Delete Button
+                rowHtml += `
+                                <button type="button" class="btn btn-social-icon btn-youtube btn-rounded" id = "0${rowId}" onclick="deleteRow(this.id);" style="margin-right: 10px;">
+                                    <i class="mdi mdi-delete"></i>
+                                </button>
+                            `;
 
                 // Show the family button
                 if (fullSearchResult[i]["Client/Family"] === "Family") {
-                    rowHtml += `<td>
-                                    <button type="button" class="btn btn-primary btn-rounded btn-icon" name="familyButton" id = "${fullSearchResult[i]["PAN"]}family" onclick="familyButton(this.id);">
-                                        <i class="ti-home"></i>
+                    rowHtml += `
+                                    <button type="button" class="btn btn-social-icon btn-linkedin btn-rounded" name="familyButton" id = "${fullSearchResult[i]["PAN"]}family" onclick="familyButton(this.id);">
+                                        <i class="mdi mdi-account-box"></i>
                                     </button>            
-                                </td>`
+                                `
                 }
+                rowHtml += `</td>`;
 
                 row.innerHTML = rowHtml;
                 tableBody.appendChild(row);
@@ -107,6 +117,32 @@ async function populateSearchTable(postData) {
     } catch (error) {
         console.error('Error:', error.message);
     }
+}
+
+async function deleteRow(rowId) {
+    const isConfirmed = window.confirm("Are you sure you want to delete?");
+    if (isConfirmed) {
+        // Remove the prefix 0 from the rowId to get the correct row Id
+        rowId = rowId.slice(1);
+
+        // Fetch the complete row with all the columns present in it
+        try {
+            const response = await fetch('/delete/' + rowId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            // Update the table to delete the row
+            let tableRow = document.getElementById(rowId + "table");
+            tableRow.parentNode.removeChild(tableRow);
+
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+        alert("Item deleted!");
+      }
 }
 
 async function updateValues(rowId) {
@@ -490,5 +526,23 @@ async function populateHeadSearchTable(postData) {
         }
     } catch (error) {
         console.error('Error:', error.message);
+    }
+}
+
+async function login() {
+    let loginName = document.getElementById("loginName").value;
+    let password = document.getElementById("passwordField").value;
+
+    if (password !== "picrm") {
+        alert("Password Incorrect");
+    } else {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"loginName" : loginName
+        })
+        });
     }
 }

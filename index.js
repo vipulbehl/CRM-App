@@ -12,7 +12,8 @@ const {
   populateConfig,
   writeConfigToDisk,
   getDayPeriod,
-  findPan
+  findPan,
+  deleteData
 } = require("./customerService.js");
 const { error } = require('console');
 
@@ -160,6 +161,17 @@ app.post('/searchPan', async (req, res) => {
     res.status(400).send(error.message);
   } else {
     res.json({ success: true});
+  }
+});
+
+app.delete('/delete/:rowId', async (req, res) => {
+  let rowId = req.params.rowId;
+  try {
+    await deleteData(rowId, Object.keys(schemaData).length)
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error ' + error.message);
   }
 });
 

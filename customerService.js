@@ -38,8 +38,21 @@ async function populateCustomerData() {
                 currentObject[header] = currentValue;
             });
 
+            // Check if all the columns of the current record are empty then ignore this value
+            let allFieldsNull = true;
+            for (const key in currentObject) {
+                if (currentObject[key] !== null && currentObject[key] !== undefined && currentObject[key].trim() !== "") {
+                    allFieldsNull = false;
+                    break;
+                }
+            }
+
+            if (allFieldsNull) {
+                continue;
+            }
+
             // Adding the row number in the object
-            currentObject['id'] = i;
+            currentObject['id'] = i + 1; // Setting the correct index after including the header offset
 
             // Add the object to the result array
             customerData.push(currentObject);
@@ -126,7 +139,7 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
                 let currentColValue = customer[col];
                 currentObj[col] = currentColValue === undefined ? "" : currentColValue;
             });
-            currentObj["id"] = i + 2;   // Setting the correct index of the row in the search result
+            currentObj["id"] = customer["id"];   // Setting the correct index of the row in the search result
             searchResult["result"].push(currentObj);
             searchResult["fullResult"].push(customer);
         }
@@ -309,13 +322,20 @@ async function updateData(data, schemaData) {
         let range = sheetName + "!" + colNumber + rowNumber;
         
         if ( typeof(value) == 'string' ) {
-            const values = value;
+            const values = [value];
             updateSpreadSheetValue({ spreadsheetId, auth, range, values });
         } else {
-            const values = value[i];
+            const values = [value[i]];
             updateSpreadSheetValue({ spreadsheetId, auth, range, values });
         }
     }
+}
+
+async function deleteData(rowId, numOfCols) {
+    const auth = await getAuthToken();
+    let range = sheetName + "!" + rowId + ":" + rowId;
+    let values = Array.from({ length: numOfCols }, () => "");
+    updateSpreadSheetValue({ spreadsheetId, auth, range, values });
 }
 
 async function populateConfig() {
@@ -396,5 +416,6 @@ module.exports = {
     populateConfig,
     writeConfigToDisk,
     getDayPeriod,
-    findPan
+    findPan,
+    deleteData
 }

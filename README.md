@@ -4,7 +4,7 @@ Command to run the code
 <b>./index.js</b>
 
 Command to build for windows platform
-<b>pkg . -t node14-win</b>
+<b>pkg . --target node18-win-x64</b>
 
 
 Add the following params to .env file
