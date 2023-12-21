@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="/css/vertical-layout-light/style.css">
     <link rel="shortcut icon" href="/images/favicon.png" />
 
+    <link rel="stylesheet" href="/css/loading.css">
+
     <script type="text/javascript" src="js/crm.js"></script>
 </head>
 
@@ -28,11 +30,10 @@
         <!-- Top Banner-->
         <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
 
-            <!-- Navidation bar header, which collapses and opens the left nav bar -->
+            <!-- Navigation bar header, which collapses and opens the left nav bar -->
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
                 <div class="me-3">
-                    <button class="navbar-toggler navbar-toggler align-self-center" type="button"
-                        data-bs-toggle="minimize">
+                    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
                         <span class="icon-menu"></span>
                     </button>
                 </div>
@@ -45,19 +46,18 @@
                     </a>
                 </div>
             </div>
-
+        
             <div class="navbar-menu-wrapper d-flex align-items-top">
                 <ul class="navbar-nav">
                     <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
                         <h1 class="welcome-text">Good <%= dayPeriod %>, <span class="text-black fw-bold"><%= config['loginName'] %></span></h1>
                     </li>
                 </ul>
-                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
-                    data-bs-toggle="offcanvas">
-                    <span class="mdi mdi-menu"></span>
-                </button>
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-danger btn-rounded btn-fw" onclick="logout()">Logout</button>
+                </div>
             </div>
-        </nav>
+        </nav>        
 
         <div class="container-fluid page-body-wrapper">
 
@@ -140,10 +140,6 @@
                                                     <% }); %>
                                                 </select>
                                             </div>
-                                            
-                                            <!-- Filter Button -->
-                                            <br>
-                                            <button type="button" class="btn btn-success" id="filterToggleButton" onclick="filterToggle()" style="float: right;">Filter</button>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -157,12 +153,30 @@
                                             <div class="form-group">
                                                 <textarea class="form-control" id="nameSearchTextArea" name="nameSearchTextArea" rows="4" style="height: 62px;" placeholder="Name Search, enter new value at new line"></textarea>
                                             </div>
-        
-                                            <!-- Search Button -->
-                                            <button type="button" class="btn btn-success" id="searchFormButton" onclick="submitSearchForm('<%= JSON.stringify(config) %>')">Search</button>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row" style="margin-top: 0; padding-top: 0; text-align: center;">
+                                    <!-- Filter Button (Align to Right) -->
+                                    <div class="col-md-6 text-end">
+                                        <div class="card-body">
+                                            <button type="button" class="btn btn-success" id="filterToggleButton" onclick="filterToggle()">Filter</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Search Button (Align to Left) -->
+                                    <div class="col-md-6 text-start">
+                                        <div class="card-body">
+                                            <button type="button" class="btn btn-success" id="searchFormButton" onclick="submitSearchForm('<%= JSON.stringify(config) %>')">Search</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Loading screen -->
+                                    <div id="loading-popup" class="loading-popup">
+                                        <div class="loading-spinner"></div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

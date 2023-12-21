@@ -13,9 +13,10 @@ const {
   writeConfigToDisk,
   getDayPeriod,
   findPan,
-  deleteData
+  deleteData,
+  logout
 } = require("./customerService.js");
-const { error } = require('console');
+const { error, log } = require('console');
 
 const app = express();
 const port = 3000;
@@ -112,6 +113,11 @@ app.post('/login', async (req, res) => {
     console.error('Error:', error.message);
     res.status(500).send('Internal Server Error ' + error.message);
   }
+});
+
+app.post('/logout', async (req, res) => {
+  logout();
+  res.redirect('/login');
 });
 
 app.post('/writeConfig', async (req, res) => {

@@ -360,6 +360,10 @@ async function populateConfig() {
     }
 }
 
+async function logout() {
+    await fs.unlink(CONFIG_FIILE_PATH);
+}
+
 function writeConfigToDisk(config) {
     fs.writeFile(CONFIG_FIILE_PATH, config, (err) => {
         if (err) {
@@ -430,5 +434,6 @@ module.exports = {
     writeConfigToDisk,
     getDayPeriod,
     findPan,
-    deleteData
+    deleteData,
+    logout
 }

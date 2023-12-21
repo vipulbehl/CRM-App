@@ -184,6 +184,7 @@ async function updateValues(rowId) {
 }
 
 function submitSearchForm(config) {
+    toggleLoadingPopup();
     let configValue = JSON.parse(config);
     const selectedColumns = getSelectedSearchParams("selectedColumns");
     const selectedRms = getSelectedSearchParams("selectedRms");
@@ -222,6 +223,7 @@ function submitSearchForm(config) {
         
         populateSearchTable(postData);
         writeConfigToDisk(configValue);
+        toggleLoadingPopup();
     }
 }
 
@@ -472,6 +474,7 @@ function getDayPeriod() {
   }
 
   function submitHeadSearchForm() {
+    toggleLoadingPopup();
     const selectedColumns = getSelectedSearchParams("selectedColumns");
     const selectedRms = getSelectedSearchParams("selectedRms");
 
@@ -487,6 +490,7 @@ function getDayPeriod() {
     }
     
     populateHeadSearchTable(postData);
+    toggleLoadingPopup();
 }
 
 async function populateHeadSearchTable(postData) {
@@ -578,4 +582,29 @@ async function filterToggle() {
         filterCardDiv.style.display = 'none';
     }
 
+}
+
+function toggleLoadingPopup() {
+    let loadingPopup = document.getElementById('loading-popup');
+    let displayType = loadingPopup.style.display;
+
+    if (displayType === 'block') {
+        setTimeout(function() {
+            loadingPopup.style.display = 'none';
+        }, 1000);
+    } else {
+        loadingPopup.style.display = 'block';
+    }
+}
+
+// Sends a get request to /logout
+async function logout() {
+    await fetch('/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    window.location.href = 'http://localhost:3000/';
 }

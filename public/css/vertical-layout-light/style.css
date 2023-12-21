@@ -15180,7 +15180,7 @@ fieldset:disabled .swal2-modal .swal2-buttonswrapper .swal2-styled,
 }
 
 .fixed-top {
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
   left: 0;
