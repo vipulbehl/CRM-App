@@ -184,7 +184,6 @@ async function updateValues(rowId) {
 }
 
 function submitSearchForm(config) {
-    toggleLoadingPopup();
     let configValue = JSON.parse(config);
     const selectedColumns = getSelectedSearchParams("selectedColumns");
     const selectedRms = getSelectedSearchParams("selectedRms");
@@ -221,6 +220,7 @@ function submitSearchForm(config) {
             console.debug("Ignore this error");
         }
         
+        toggleLoadingPopup();
         populateSearchTable(postData);
         writeConfigToDisk(configValue);
         toggleLoadingPopup();
@@ -591,7 +591,7 @@ function toggleLoadingPopup() {
     if (displayType === 'block') {
         setTimeout(function() {
             loadingPopup.style.display = 'none';
-        }, 1000);
+        }, 2000);
     } else {
         loadingPopup.style.display = 'block';
     }
