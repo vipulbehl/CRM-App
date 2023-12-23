@@ -34,84 +34,88 @@ async function populateSearchTable(postData) {
             const searchResultTable = document.getElementById("searchResultTable");
             searchResultTable.innerHTML = '';
 
-            // Populating the headers
-            let tableHeader = document.createElement('thead');
-            let row = document.createElement('tr');
-            Object.keys(searchResult[0]).forEach(item => {
-                if (item != "id") {
-                    row.innerHTML += `<th>${item}</th>`;
-                }
-            });
-            tableHeader.appendChild(row);
-            searchResultTable.appendChild(tableHeader);
-
-            // Populating the data
-            let tableBody = document.createElement('tbody');
-            // Iterating over the rows
-            for (let i = 0; i < searchResult.length; i++) {
-                let rowId = searchResult[i]['id'];
+            // Only populating results when there is some data
+            if (searchResult !== undefined && searchResult !== null || searchResult.length < 1 ) {
+                // Populating the headers
+                let tableHeader = document.createElement('thead');
                 let row = document.createElement('tr');
-                row.id = rowId + "table";
-
-                // Looping over each column inside the row
-                let rowHtml = "";
-                let enableIds = []
-                Object.keys(searchResult[i]).forEach(col => {
-
-                    if (col != "id") {
-                        const obj = JSON.parse(schema[col][0])
-                        let type = obj["type"]
-                        //These are the allowed values for a column, which will appear in the dropdown list
-                        let values = obj["values"]
-                        let columnValue = searchResult[i][col];
-                        enableIds.push(columnValue);
-
-                        if(type == "Dropdown") {
-                            // Displaying dropdown in case the field is of dropdown value otherwise displaying text/date option
-                            rowHtml += `<td><select name="${rowId}" id="${columnValue}" disabled>`;
-                            values.forEach(item => {
-                                if(item.toLowerCase() == columnValue.toLowerCase()) {
-                                    rowHtml += `<option value="${item}" selected>${item}</option>`;
-                                } else {
-                                    rowHtml += `<option value="${item}">${item}</option>`;
-                                }
-                            });
-                            rowHtml += `</select></td>`;
-                        } else {
-                            rowHtml += `<td><input type="${type}" id="${columnValue}" name="${rowId}" value="${columnValue}" disabled></td>`;
-                        }
+                Object.keys(searchResult[0]).forEach(item => {
+                    if (item != "id") {
+                        row.innerHTML += `<th>${item}</th>`;
                     }
                 });
+                tableHeader.appendChild(row);
+                searchResultTable.appendChild(tableHeader);
 
-                // Edit Button
-                rowHtml += `<td>
-                                <button type="button" class="btn btn-social-icon btn-twitter btn-rounded" id = "${rowId}0" onclick="enableButtons(this.id);" style="margin-right: 10px;">
-                                    <i class="mdi mdi-grease-pencil"></i>               
-                                </button>
-                            `;
+                // Populating the data
+                let tableBody = document.createElement('tbody');
+                // Iterating over the rows
+                for (let i = 0; i < searchResult.length; i++) {
+                    let rowId = searchResult[i]['id'];
+                    let row = document.createElement('tr');
+                    row.id = rowId + "table";
 
-                // Show the family button
-                if (fullSearchResult[i]["Client/Family"] === "Family") {
-                    rowHtml += `
-                                    <button type="button" class="btn btn-social-icon btn-linkedin btn-rounded" name="familyButton" id = "${fullSearchResult[i]["PAN"]}family" onclick="familyButton(this.id);">
-                                        <i class="mdi mdi-home"></i>
-                                    </button>            
-                                `
+                    // Looping over each column inside the row
+                    let rowHtml = "";
+                    let enableIds = []
+                    Object.keys(searchResult[i]).forEach(col => {
+
+                        if (col != "id") {
+                            const obj = JSON.parse(schema[col][0])
+                            let type = obj["type"]
+                            //These are the allowed values for a column, which will appear in the dropdown list
+                            let values = obj["values"]
+                            let columnValue = searchResult[i][col];
+                            enableIds.push(columnValue);
+
+                            if(type == "Dropdown") {
+                                // Displaying dropdown in case the field is of dropdown value otherwise displaying text/date option
+                                rowHtml += `<td><select name="${rowId}" id="${columnValue}" disabled>`;
+                                values.forEach(item => {
+                                    if(item.toLowerCase() == columnValue.toLowerCase()) {
+                                        rowHtml += `<option value="${item}" selected>${item}</option>`;
+                                    } else {
+                                        rowHtml += `<option value="${item}">${item}</option>`;
+                                    }
+                                });
+                                rowHtml += `</select></td>`;
+                            } else {
+                                rowHtml += `<td><input type="${type}" id="${columnValue}" name="${rowId}" value="${columnValue}" disabled></td>`;
+                            }
+                        }
+                    });
+
+                    // Edit Button
+                    rowHtml += `<td>
+                                    <button type="button" class="btn btn-social-icon btn-twitter btn-rounded" id = "${rowId}0" onclick="enableButtons(this.id);" style="margin-right: 10px;">
+                                        <i class="mdi mdi-grease-pencil"></i>               
+                                    </button>
+                                `;
+
+                    // Show the family button
+                    if (fullSearchResult[i]["Client/Family"] !== "Client") {
+                        rowHtml += `
+                                        <button type="button" class="btn btn-social-icon btn-linkedin btn-rounded" name="familyButton" id = "${fullSearchResult[i]["PAN"]}family" onclick="familyButton(this.id);">
+                                            <i class="mdi mdi-home"></i>
+                                        </button>            
+                                    `
+                    }
+                    rowHtml += `</td>`;
+
+                    // Delete Button
+                    rowHtml += ` <td>
+                                    <button type="button" class="btn btn-social-icon btn-youtube btn-rounded" id = "0${rowId}" onclick="deleteRow(this.id);" style="margin-right: 10px;">
+                                        <i class="mdi mdi-delete"></i>
+                                    </button>
+                                </td>
+                                `;
+
+                    row.innerHTML = rowHtml;
+                    tableBody.appendChild(row);
                 }
-                rowHtml += `</td>`;
-
-                // Delete Button
-                rowHtml += ` <td>
-                                <button type="button" class="btn btn-social-icon btn-youtube btn-rounded" id = "0${rowId}" onclick="deleteRow(this.id);" style="margin-right: 10px;">
-                                    <i class="mdi mdi-delete"></i>
-                                </button>
-                             </td>
-                            `;
-
-                row.innerHTML = rowHtml;
-                tableBody.appendChild(row);
+                searchResultTable.appendChild(tableBody);
             }
-            searchResultTable.appendChild(tableBody);
+            
         } else {
             console.error('Error:', response.statusText);
         }
@@ -203,12 +207,12 @@ function submitSearchForm(config) {
 
         const nameSearchTextArea = document.getElementById("nameSearchTextArea").value;
         if (nameSearchTextArea !== undefined && nameSearchTextArea !== null && nameSearchTextArea.trim() !== "") {
-            postData["nameList"] = nameSearchTextArea.split('\n').map(value => (value !== null && value !== undefined) ? value.trim() : value);
+            postData["nameList"] = nameSearchTextArea.split('\n').map(value => value.trim()).filter(value => value !== '');
         }
         
         const panSearchTextArea = document.getElementById("panSearchTextArea").value;
         if (panSearchTextArea !== undefined && panSearchTextArea !== null && panSearchTextArea.trim() !== "") {
-            postData["panList"] = panSearchTextArea.split('\n').map(value => (value !== null && value !== undefined) ? value.trim() : value);
+            postData["panList"] = panSearchTextArea.split('\n').map(value => value.trim()).filter(value => value !== '');
         }
 
         try {
@@ -352,7 +356,7 @@ async function validateAddClient(inputValuesList, schemaData) {
             }
             let isDuplicatePanPresent = await checkDuplicatePan(providedValueForField);
             if (isDuplicatePanPresent) {
-                throw Error(currentField + " Already exists");
+                alert("DUPLICATE ENTRY ADDED - PAN already exists");
             }
         }
         if (currentField === "Name") {
@@ -370,7 +374,7 @@ async function validateAddClient(inputValuesList, schemaData) {
             }
         }
 
-        if (currentField === "Head Pan" && isFamilyMember) {
+        if (currentField === "Family Head Pan" && isFamilyMember) {
             let providedValueForField = inputValuesList[i].trim();
             if (providedValueForField === undefined || providedValueForField === null || providedValueForField === "") {
                 throw Error(currentField + " cannot be empty while adding Family Member");
@@ -454,7 +458,8 @@ function getDayPeriod() {
     }
   }
 
-  function familyButton(panNumber) {  
+  function familyButton(panNumber) {
+    toggleLoadingPopup();
     let pan = panNumber.slice(0, -6);
     let table = document.getElementById("searchResultTable")
     let selectedColumns = [];
@@ -471,6 +476,7 @@ function getDayPeriod() {
         isIncludeFamily: true
     };
     populateSearchTable(postData);
+    toggleLoadingPopup();
   }
 
   function submitHeadSearchForm() {
@@ -485,7 +491,7 @@ function getDayPeriod() {
 
     const headPanSearchTextArea = document.getElementById("headPanSearchTextArea").value;
     if (headPanSearchTextArea !== undefined && headPanSearchTextArea !== null && headPanSearchTextArea.trim() !== "") {
-        postData["panList"] = headPanSearchTextArea.split('\n').map(value => (value !== null && value !== undefined) ? value.trim() : value);
+        postData["panList"] = headPanSearchTextArea.split('\n').map(value => value.trim()).filter(value => value !== '');
         postData["isOnlyHeadInfo"] = true;
     }
     

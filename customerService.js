@@ -120,7 +120,7 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
         panList = updatedPanList;
     }
 
-    // Condition to populate only the ids of the head and discard other value (Select all RMs here) 
+    // Head Search Option - Condition to populate only the ids of the head and discard other value (Select all RMs here)
     if (isOnlyHeadInfo !== undefined && isOnlyHeadInfo !== null && isOnlyHeadInfo === true) {
         return findHeadSearchData(panList, customerData, selectedColumns);
     }
@@ -161,31 +161,44 @@ async function searchData(selectedColumns, selectedRMs, nameList, panList, isInc
     return searchResult;
 }
 
+/**
+ * Given a list of the pan ids, first find all the entries matching the pan list
+ * For each customer find the head information (using the head family pan field)
+ * Create the result as {member_name, member_pan, head_details(this contains all the columns user has selected)}
+ * @param {*} panList 
+ * @param {*} customerData 
+ * @param {*} selectedColumns 
+ * @returns 
+ */
 function findHeadSearchData(panList, customerData, selectedColumns) {
     const searchResult = {
         "result": []
     };
 
-    panList.forEach(memberPan => {
-        // Populate the member name and pan
-        let memberDict = getMemberDetails(memberPan, customerData);
-        let memberName = memberDict["Name"];
-        
-        // Get the head pan id for the given pan
-        let headPan = findHeadPan([memberPan], customerData)[0];
+    panList.forEach(panId => {
+        // Get the list of customers matching this pan id
+        let customersList =  customerData.filter(customer => customer["PAN"].toLowerCase() === panId.toLowerCase());
+        // let headPanList = findHeadPan(panId, customerData);
 
-        // Fetch all the details of the head pan
-        let headDict = getMemberDetails(headPan, customerData);
-
-        // Filter the head pan details based on the selected columns
-        let currentObj = {"Member Name": memberName, "Member Pan": memberPan};
-        selectedColumns.forEach(col => {
-            let currentColValue = headDict[col];
-            currentObj[col] = currentColValue === undefined ? "" : currentColValue;
-        });
-
-        // Add the details in the result list
-        searchResult["result"].push(currentObj);
+        for (let i = 0; i < customersList.length; i++) {
+            let customer = customersList[i];
+            let headObj;
+            
+            try {
+                let headCustomers = customerData.filter(c => c["PAN"].toLowerCase() === customer["Family Head Pan"].toLowerCase()); // This contains the list of possible head customers, find the one which is not a family member and use that
+                headObj = headCustomers.find(h => h["Client/Family"] !== "Family Member");
+            } catch (error) {
+                // Ignore the error
+            }
+            headObj = (headObj === undefined || headObj === null) ? customer : headObj;
+            
+            let currentObj = {"Member Name": customer["Name"], "Member Pan": customer["PAN"]};
+            selectedColumns.forEach(col => {
+                let currentColValue = headObj[col];
+                currentObj[col] = currentColValue === undefined ? "" : currentColValue;
+            });
+            searchResult["result"].push(currentObj);
+        }
     });
 
     return searchResult;
@@ -221,7 +234,7 @@ function findHeadPan(panList, customerData) {
         let customerPan = customer["PAN"].toLowerCase();
 
         if (lowerCasePanList.includes(customerPan)) {
-            let headPan = customer["Head Pan"];
+            let headPan = customer["Family Head Pan"];
             if (headPan === undefined || headPan === null) {
                 headPan = customerPan;
             }
@@ -280,7 +293,7 @@ function isIncludeCustomer(rmList, nameList, panList, customer) {
 
     // If the name and pan list is empty, don't display the family members. We only want the head of the family in that case
     if ( (panList === undefined || panList === null) && (nameList === undefined || nameList === null) ) {
-        let head = customer["Head Pan"];
+        let head = customer["Family Head Pan"];
         if (head !== null && head !== undefined && head.trim() !== "") {
             return false;
         }
@@ -389,7 +402,7 @@ function getDayPeriod() {
   function mapHeadAndMembers(customerData) {
     let headMemberMapping = {}
     customerData.forEach(customer => {
-        let headPanId = customer["Head Pan"];
+        let headPanId = customer["Family Head Pan"];
         let customerPan = customer["PAN"];
 
         // Condition where the head is empty, meaning the customer himself is the head
