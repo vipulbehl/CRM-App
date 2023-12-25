@@ -39,6 +39,7 @@ async function populateSearchTable(postData) {
                 // Populating the headers
                 let tableHeader = document.createElement('thead');
                 let row = document.createElement('tr');
+                row.innerHTML += `<th>S.No.</th>`;
                 Object.keys(searchResult[0]).forEach(item => {
                     if (item != "id") {
                         row.innerHTML += `<th>${item}</th>`;
@@ -57,7 +58,7 @@ async function populateSearchTable(postData) {
 
                     // Looping over each column inside the row
                     let rowHtml = "";
-                    let enableIds = []
+                    rowHtml += `<td>${i+1}</td>`;
                     Object.keys(searchResult[i]).forEach(col => {
 
                         if (col != "id") {
@@ -66,7 +67,6 @@ async function populateSearchTable(postData) {
                             //These are the allowed values for a column, which will appear in the dropdown list
                             let values = obj["values"]
                             let columnValue = searchResult[i][col];
-                            enableIds.push(columnValue);
 
                             if(type == "Dropdown") {
                                 // Displaying dropdown in case the field is of dropdown value otherwise displaying text/date option
@@ -531,13 +531,7 @@ function getDayPeriod() {
   function familyButton(panNumber) {
     toggleLoadingPopup();
     let pan = panNumber.slice(0, -6);
-    let table = document.getElementById("searchResultTable")
-    let selectedColumns = [];
-    const thElements = table.querySelector('thead').querySelectorAll('th');
-
-    thElements.forEach(th => {
-        selectedColumns.push(th.textContent.trim());
-    });
+    let selectedColumns = getSelectedSearchParams("selectedColumns");;
 
     // Sending a post request for search
     let postData = {
@@ -612,7 +606,6 @@ async function populateHeadSearchTable(postData) {
 
                 // Looping over each column inside the row
                 let rowHtml = "";
-                let enableIds = []
                 Object.keys(searchResult[i]).forEach(col => {
                     let columnValue = searchResult[i][col];
                     rowHtml += `<td><input type="text" id="${columnValue}" value="${columnValue}" disabled></td>`;
