@@ -87,7 +87,7 @@ async function populateSearchTable(postData) {
 
                     // Edit Button
                     rowHtml += `<td>
-                                    <button type="button" class="btn btn-social-icon btn-twitter btn-rounded" id = "${rowId}0" onclick="enableButtons(this.id);" style="margin-right: 10px;">
+                                    <button type="button" class="btn btn-social-icon btn-twitter btn-rounded" id = "${rowId}0" onclick="toggleUpdatePopup(this.id);" style="margin-right: 10px;">
                                         <i class="mdi mdi-grease-pencil"></i>               
                                     </button>
                                 `;
@@ -167,7 +167,7 @@ async function updateValues(rowId) {
     let postData = {
         selectedColumns: selectedColumns,
         values: values,
-        rowNumber: parseInt(rowId)
+        rowNumber: parseInt(rowId.slice(9,rowId.length))
     };
 
     // Send a post request to /update endpoint
@@ -249,30 +249,100 @@ function getFilters(config) {
     return filters;
 }
 
-function enableButtons(enableDisableButtonId) {
-    let fieldsList = document.getElementsByName(enableDisableButtonId.slice(0,-1));
-    let enableDisableButton = document.getElementById(enableDisableButtonId);
-    let isUpdate = false;
+function toggleUpdatePopup(updateButtonId, isUpdateData=false) {
+    let popup = document.getElementById("overlay");
+    let popupTable = document.getElementById("popupTable");
 
-    fieldsList.forEach(field => {
-        if (field.disabled) {
-            // Enable all the other field and enable the save button
-            field.removeAttribute('disabled');
-            enableDisableButton.innerHTML = "Save";
-        } else {
-            field.disabled = true;
-            enableDisableButton.innerHTML = "Edit";
+    // Popup is disabled, populate and enable it
+    if (popup.style.display == "none") {
+        let headersList = getSelectedSearchParams("selectedColumns");
+        let rowNumber = updateButtonId.slice(0,-1);
+        let mainRowButtonsList = document.getElementsByName(rowNumber);
+        
+        popup.style.display = "flex";
 
-            // Set a flag to make sure that there is an update
-            isUpdate = true;
+        // Populate the popup values
+        popupTable.innerHTML = '';
+        for (let i=0; i<mainRowButtonsList.length; i++) {
+            let currentMainRow = mainRowButtonsList[i];
+            let currentHeader = headersList[i];
+            
+            let currentRow = document.createElement('tr');
+            
+            // Setting the header
+            let currentHeaderEntry = document.createElement('td');
+            currentHeaderEntry.style.textAlign = "left";
+            currentHeaderEntry.textContent = currentHeader;
+
+            let currentCell = document.createElement('td');
+            currentCell.style.textAlign = "left";
+            currentCell.style.padding = "3px 10px";
+
+            let currentCellType = currentMainRow.type;
+            let currentCellField;
+
+            if (currentCellType === 'text') {
+                // If the current type of the field is input just add it
+                currentCellField = document.createElement('input');
+                currentCellField.type = "text";
+                currentCellField.value = currentMainRow.value;
+            } else {
+                // Current type of the field is select, create the select field also the option fields inside it
+                currentCellField = document.createElement('select');
+                let childrenOfMainRow = currentMainRow.childNodes;
+                childrenOfMainRow.forEach(child => {
+                    let currentSelectElement = document.createElement('option');
+                    currentSelectElement.selected = child.selected;
+                    currentSelectElement.value = child.value;
+                    currentSelectElement.textContent = child.value;
+                    
+                    currentCellField.appendChild(currentSelectElement);
+                });
+            }
+            currentCellField.name = "popupCell" + rowNumber;
+
+            // Adding the input/select field inside the <td>
+            currentCell.appendChild(currentCellField);
+
+            // Adding both the <td> to the current Row
+            currentRow.appendChild(currentHeaderEntry);
+            currentRow.appendChild(currentCell);
+
+            // Adding row to the main table
+            popupTable.appendChild(currentRow);
         }
-    });
+        // Adding the update and delete buttons
+        let buttonsRow = document.createElement('tr');
+        buttonsRow.innerHTML += '<td><button type="button" class="btn btn-success btn-rounded btn-fw" onclick=updateEntry(this.id) id="update'+ rowNumber + '">Update</button></td>';
+        buttonsRow.innerHTML += '<td><button type="button" class="btn btn-danger btn-rounded btn-fw" onclick=cancelUpdatePopup()>Cancel</button></td>';
+        
+        popupTable.appendChild(buttonsRow);
+    } else {
+        // Popup is enabled disable it
+        let rowNumber = updateButtonId;
 
-    // Call to update the row if there are some values
-    if (isUpdate) {
-        isUpdate = false;
-        updateValues(enableDisableButtonId.slice(0,-1));
+        if (isUpdateData) {
+            let mainRowButtonsList = document.getElementsByName(rowNumber);
+            let popupButtonList = document.getElementsByName("popupCell" + rowNumber);
+            for (let j=0; j<mainRowButtonsList.length; j++) {
+                mainRowButtonsList[j].value = popupButtonList[j].value;
+            }
+
+            updateValues("popupCell" + rowNumber);
+        }
+
+        popupTable.innerHTML = '';
+        popup.style.display = "none";
     }
+}
+
+function updateEntry(rowId) {
+    let rowNumber = rowId.slice(6,rowId.length);
+    toggleUpdatePopup(rowNumber, true);
+}
+
+function cancelUpdatePopup() {
+    toggleUpdatePopup();
 }
 
 async function addClient(postData) {

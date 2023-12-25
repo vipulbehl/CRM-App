@@ -49,3 +49,7 @@ Start the server
   npm run start
 ```
 
+# Creating a windows executable
+```bash
+  pkg . -t node18-win
+```
