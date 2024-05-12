@@ -333,7 +333,13 @@ async function downloadData(searchResult) {
         
         // Iterating over the keys of the row and appending to the exportData
         Object.keys(searchResult[i]).forEach(function (c, j) {
-            exportData = exportData.concat(searchResult[i][c]);
+            let data = String(searchResult[i][c]);
+            // If data contains comma, enclose it in double quotes
+            if (data.includes(',')) {
+                data = `"${data}"`;
+            }
+            exportData = exportData.concat(data);
+
             if (j < (Object.keys(searchResult[i]).length)-1) {
                 exportData = exportData.concat(",");
             }
