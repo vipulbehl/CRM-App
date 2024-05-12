@@ -304,8 +304,20 @@ function isIncludeCustomer(rmList, nameList, panList, customer) {
 
 async function addData(data) {
     const auth = await getAuthToken();
+
+    // Finding the number of rows that already exist in the spread sheet
+    // This is done so that we only add the new entry at the end of the spread sheet
+    const spreadSheetValues = await getSpreadSheetValues({
+        spreadsheetId,
+        auth,
+        sheetName,
+    });
+    // Find the last row with content
+    let lastRowWithContent = spreadSheetValues.data.values.length;
+
     const values = data["values"];
-    const response = await addSpreadSheetsValue({ spreadsheetId, auth, sheetName, values });
+    const range = sheetName + "!A" + (lastRowWithContent + 1) + ":Z" + (lastRowWithContent + 1);
+    const response = await addSpreadSheetsValue({ spreadsheetId, auth, range, values });
 }
 
 async function downloadData(searchResult) {

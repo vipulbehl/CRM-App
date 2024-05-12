@@ -28,11 +28,11 @@ async function getSpreadSheetValues({ spreadsheetId, auth, sheetName }) {
   return res;
 }
 
-async function addSpreadSheetsValue({ spreadsheetId, auth, sheetName, values }) {
+async function addSpreadSheetsValue({ spreadsheetId, auth, range, values }) {
   const res = await sheets.spreadsheets.values.append({
     spreadsheetId: spreadsheetId,
     auth: auth,
-    range: sheetName,
+    range: range,
     valueInputOption: 'USER_ENTERED',
     resource: {
       values: [values],
