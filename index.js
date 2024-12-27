@@ -14,7 +14,8 @@ const {
   getDayPeriod,
   findPan,
   deleteData,
-  logout
+  logout,
+  dashboard
 } = require("./customerService.js");
 const { error, log } = require('console');
 
@@ -128,6 +129,28 @@ app.post('/writeConfig', async (req, res) => {
   } catch(error) {
     console.error("Unable to write config file to disk" + error.message);
     res.json({ success: false});
+  }
+});
+
+app.get('/dashboard', async (req, res) => {
+  try {
+    res.render('dashboard', {columnNames: columnNames, schemaData: schemaData});
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).send('Internal Server Error ' + error.message);
+  }
+});
+
+// Loading the search results
+app.post('/dashboard', async (req, res) => {
+  try {
+    searchResult = await dashboard(
+      req.body["selectedColumn"]
+    );
+  
+    res.json({ success: true, result: searchResult });
+  } catch (error) {
+    res.status(500).send('Internal Server Error ' + error.message);
   }
 });
 

@@ -9,6 +9,75 @@ function getSelectedSearchParams(selectId) {
     return selectedValues;
 }
 
+async function populateDashboardData(postData) {
+    try {
+        const response = await fetch('/dashboard', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        });
+
+        if (response.ok) {
+            const result = await response.text();
+            const resultObj = JSON.parse(result)["result"];
+            const dropdownKeysAndValues = JSON.parse(postData["schemaData"]);
+            const selectedColumn = postData["selectedColumn"]
+
+            // Enable the result box here and populate the results
+            const tableCardDiv = document.getElementById("tableCard");
+            tableCardDiv.style.display = 'block'
+
+            const searchResultTable = document.getElementById("searchResultTable");
+            searchResultTable.innerHTML = '';
+
+            // Header values 
+            headerValues = dropdownKeysAndValues[postData["selectedColumn"]];
+
+            // Only populating results when there is some data
+            if (resultObj !== undefined && resultObj !== null ) {
+                // Populating the headers
+                let tableHeader = document.createElement('thead');
+                let row = document.createElement('tr');
+                row.innerHTML += `<th></th>`;
+                dropdownKeysAndValues[selectedColumn].forEach(item => {
+                    row.innerHTML += `<th>${item}</th>`;
+                });
+                tableHeader.appendChild(row);
+                searchResultTable.appendChild(tableHeader);
+
+                let tableBody = document.createElement('tbody');
+                // Iterating over the results and populating the table details
+                Object.keys(resultObj).forEach(key => {
+                    // Creating the row header, which will contain the RM name
+                    let row = document.createElement('tr');
+                    let rowHtml = "";
+                    rowHtml += `<th>${key}</th>`;
+                    
+                    // Loop to populate the columns
+                    dropdownKeysAndValues[selectedColumn].forEach(item => {
+                        if (item in resultObj[key]) {
+                            // If the result has the column value populate it
+                            rowHtml += `<td>${resultObj[key][item]}</td>`;
+                        } else {
+                            rowHtml += `<td></td>`;
+                        }
+                    });
+
+                    row.innerHTML = rowHtml;
+                    tableBody.appendChild(row);
+                });
+                searchResultTable.appendChild(tableBody);
+            }
+        } else {
+            console.error('Error:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+}
+
 async function populateSearchTable(postData) {
     try {
         const response = await fetch('/search', {
@@ -229,6 +298,18 @@ function submitSearchForm(config) {
         writeConfigToDisk(configValue);
         toggleLoadingPopup();
     }
+}
+
+function populateDashboard(schemaData) {
+    let selectedColumn = document.getElementById("dashboardColumn");
+    let postData = {
+        selectedColumn: selectedColumn.value,
+        schemaData: schemaData
+    };
+
+    toggleLoadingPopup();
+    populateDashboardData(postData);
+    toggleLoadingPopup();
 }
 
 function getFilters(config) {

@@ -94,6 +94,36 @@ function getRmNames(schemaData) {
     return uniqueRmNames;
 }
 
+async function dashboard(selectedColumn) {
+    let customerData = await populateCustomerData();
+
+    const result = {};
+
+    customerData.forEach((row) => {
+        const rm = row.RM; // Group by RM
+        let value = row[selectedColumn];
+        if (typeof value === "undefined") {
+            value = "";
+        }
+
+        if (!result[rm]) {
+            result[rm] = {};
+          }
+      
+          if (!result[rm][value]) {
+            result[rm][value] = 0;
+          }
+      
+          result[rm][value] += 1; // Increment the count for the specific value
+
+    });
+
+    // There are undefined values in the keys of the dictionary, they won't be displayed in the UI. So we replace them with empty strings ""
+
+
+    return result;
+}
+
 /**
  * Search based on Columns, Rms, Name, Pan, Head Pan
  * @param {*} selectedColumns 
@@ -466,5 +496,6 @@ module.exports = {
     getDayPeriod,
     findPan,
     deleteData,
-    logout
+    logout,
+    dashboard
 }
