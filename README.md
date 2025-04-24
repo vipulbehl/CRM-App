@@ -1,4 +1,3 @@
-
 # CRM-App
 CRM application is built on the Node.js platform, leveraging the power of Google Sheets as a flexible and scalable backend database. This innovative solution aims to streamline and enhance customer interactions, providing businesses with a robust tool to manage, analyze, and optimize their relationships with clients.
 
