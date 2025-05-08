@@ -330,6 +330,18 @@ function getFilters(config) {
     return filters;
 }
 
+function togggleErrorPopup() {
+    let errorPopupOverlay = document.getElementById('errorOverlay');
+    errorPopupOverlay.style.display = "flex";
+
+    let errorPopupTable = document.getElementById("errorTable");
+    let buttonsRow = document.createElement('tr');
+    buttonsRow.innerHTML += '<td>Error Occurred, reopen the application</td>';
+    buttonsRow.innerHTML += '<td><button type="button" class="btn btn-danger btn-rounded btn-fw" onclick=window.location.reload()>Refresh</button></td>';
+        
+    errorPopupTable.appendChild(buttonsRow);
+}
+
 function toggleUpdatePopup(updateButtonId, isUpdateData=false) {
     let popup = document.getElementById("overlay");
     let popupTable = document.getElementById("popupTable");
@@ -758,3 +770,22 @@ async function logout() {
 
     window.location.href = 'http://localhost:3000/';
 }
+
+let healthCheckInterval;
+
+function checkServerStatus() {
+    fetch('/health')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Server is down');
+            }
+        })
+        .catch(() => {
+            togggleErrorPopup();
+            clearInterval(healthCheckInterval);
+            alert("Server is down, please restart the server");
+        });
+}
+
+// Run the check every 5 seconds
+healthCheckInterval = setInterval(checkServerStatus, 10000);
