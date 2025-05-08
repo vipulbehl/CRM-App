@@ -781,9 +781,9 @@ function checkServerStatus() {
             }
         })
         .catch(() => {
-            togggleErrorPopup();
-            clearInterval(healthCheckInterval);
             alert("Server is down, please restart the server");
+            clearInterval(healthCheckInterval);
+            togggleErrorPopup();
         });
 }
 
