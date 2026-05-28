@@ -334,16 +334,13 @@ function populateDashboard(schemaData) {
 
 function getFilters(config) {
     let filters = {};
-    let selectedColumns = JSON.parse(config)["selectedColumns"];
-    
-    selectedColumns.forEach(column => {
-        let filterSelectId = "Filter" + column;
-        let filterSelectTag = document.getElementById(filterSelectId);
-        if (filterSelectTag !== null && filterSelectTag !== undefined) {
-            let selectedValuesForColumn = getSelectedSearchParams(filterSelectId);
-            if (selectedValuesForColumn !== null && selectedValuesForColumn != undefined && selectedValuesForColumn.length !== 0) {
-                filters[column] = selectedValuesForColumn;
-            }
+    const filterSelectTags = document.querySelectorAll("[data-filter-column]");
+
+    filterSelectTags.forEach(filterSelectTag => {
+        const column = filterSelectTag.dataset.filterColumn;
+        const selectedValuesForColumn = getSelectedSearchParams(filterSelectTag.id);
+        if (selectedValuesForColumn !== null && selectedValuesForColumn != undefined && selectedValuesForColumn.length !== 0) {
+            filters[column] = selectedValuesForColumn;
         }
     });
     

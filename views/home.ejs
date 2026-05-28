@@ -228,9 +228,9 @@
                                                             if (typeOfObject === "Dropdown") { %>
                                                                 <td style="padding-right: 80px;">
                                                                 <h4 class="card-title"><%= key %></h4>
-                                                                <select class="js-example-basic-multiple w-100" multiple="multiple" style="width: 100px;" id="Filter<%= key%>">
+                                                                <select class="js-example-basic-multiple w-100" multiple="multiple" style="width: 100px;" id="Filter<%= i %>" data-filter-column="<%= key %>">
                                                                     <% validValues.forEach(item => { %>
-                                                                        <option id="<%= item %>" name="<%= item %>" value="<%= item %>"><%= item %></option>
+                                                                        <option value="<%= item %>"><%= item %></option>
                                                                     <% }); %>
                                                                 </select>
                                                                 </td>
