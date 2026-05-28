@@ -205,6 +205,10 @@ app.delete('/delete/:rowId', async (req, res) => {
   }
 });
 
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
   console.log("Credentials file ", process.env.GOOGLE_APPLICATION_CREDENTIALS)
