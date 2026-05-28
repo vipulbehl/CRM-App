@@ -300,6 +300,26 @@ function submitSearchForm(config) {
     }
 }
 
+function submitSearchOnEnter(event) {
+    if (event.key !== "Enter" || event.shiftKey || event.target.value.trim() === "") {
+        return;
+    }
+
+    event.preventDefault();
+    document.getElementById("searchFormButton").click();
+}
+
+function initSearchTextAreaSubmit() {
+    ["panSearchTextArea", "nameSearchTextArea"].forEach(textAreaId => {
+        const textArea = document.getElementById(textAreaId);
+        if (textArea !== null && textArea !== undefined) {
+            textArea.addEventListener("keydown", submitSearchOnEnter);
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", initSearchTextAreaSubmit);
+
 function populateDashboard(schemaData) {
     let selectedColumn = document.getElementById("dashboardColumn");
     let postData = {
