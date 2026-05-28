@@ -25030,6 +25030,28 @@ dl li {
   font-size: .875rem;
 }
 
+#searchResultTable {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+#searchResultTable thead {
+  display: table-header-group;
+}
+
+#searchResultTable thead th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 5 !important;
+  background: #fff !important;
+}
+
+#tableCard .table-responsive {
+  max-height: calc(100vh - 220px);
+  min-height: 55vh;
+  overflow-y: auto;
+}
+
 .table thead th i {
   margin-left: 0.325rem;
 }
