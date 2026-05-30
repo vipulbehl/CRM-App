@@ -30788,4 +30788,27 @@ div.tagsinput span.tag a {
   }
 }
 
+#tableCard {
+  height: 100vh !important;
+  min-height: 100vh !important;
+}
+
+#tableCard .card,
+#tableCard .card-body {
+  height: 100% !important;
+}
+
+#tableCard .card-body {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#tableCard .table-responsive {
+  flex: 1 1 auto !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: unset !important;
+  overflow-y: auto !important;
+}
+
 /*# sourceMappingURL=../maps/vertical-layout-light/style.css.map */

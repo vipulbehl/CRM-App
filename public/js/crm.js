@@ -27,7 +27,7 @@ async function populateDashboardData(postData) {
 
             // Enable the result box here and populate the results
             const tableCardDiv = document.getElementById("tableCard");
-            tableCardDiv.style.display = 'block'
+            tableCardDiv.style.display = 'flex'
 
             const searchResultTable = document.getElementById("searchResultTable");
             searchResultTable.innerHTML = '';
@@ -98,7 +98,7 @@ async function populateSearchTable(postData) {
 
             // Enable the search result box here and populate the results
             const tableCardDiv = document.getElementById("tableCard");
-            tableCardDiv.style.display = 'block'
+            tableCardDiv.style.display = 'flex'
 
             const searchResultTable = document.getElementById("searchResultTable");
             searchResultTable.innerHTML = '';
@@ -692,7 +692,7 @@ async function populateHeadSearchTable(postData) {
 
             // Enable the search result box here and populate the results
             const tableCardDiv = document.getElementById("tableCard");
-            tableCardDiv.style.display = 'block'
+            tableCardDiv.style.display = 'flex'
 
             const searchResultTable = document.getElementById("searchResultTable");
             searchResultTable.innerHTML = '';
